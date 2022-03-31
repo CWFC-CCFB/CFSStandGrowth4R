@@ -73,25 +73,28 @@ SGOr <- function() {
   return ("'")
 }
 
-#' Returns the Contains operator for use in query construction
+#' Returns the Contains term for use in query construction
+#' Note : This corresponds to the LIKE SQL operator which is case sensitive
 #' @export
 SGContains <- function(field, value) {
   return (paste(field, ":", value, sep=""))
 }
 
-#' Returns the LowerThan operator for use in query construction
+#' Returns the LowerThan term for use in query construction
 #' @export
 SGLowerThan <- function(field, value) {
   return (paste(field, "<", value, sep=""))
 }
 
-#' Returns the GreaterThan operator for use in query construction
+#' Returns the GreaterThan term for use in query construction
 #' @export
 SGGreaterThan <- function(field, value) {
   return (paste(field, ">", value, sep=""))
 }
 
-#' Constructs a query using the provided operators and predicates
+#' Constructs a query using the provided terms and predicates
+#' A query is a series of one or more terms separated by predicates.
+#' Example : mmid contains "foo" AND outputType contains "All" OR nbRealizations > 1000
 #' @export
 SGQuery <- function(...) {
   return (paste(..., sep = ""))
@@ -99,10 +102,21 @@ SGQuery <- function(...) {
 
 #' Searches the metamodel database for matches to the specified query and returns
 #' the matching metamodels
-#' @param query the query
+#' @param query a string containing the query.  Null will return all metamodels in the database.
+
+#' Queries should be created using the
+#' query utility methods.
+#'
+#' example : SGQuery(SGContains("mmid", "FMU02664"), SGAnd(), SGContains("outputType", "Coniferous"))
+#'
+#' Note : Groups / associativity is not supported by queries.  To perform a query of type :
+#' (TermA AND TermB) OR TermC you will have to create a query for (TermA AND TermB),
+#' then a second query for TermC and then combine the results together.
+#'
 #' @return a dataframe containing all metamodels matching the query
+#' @seealso SGQuery, SGContains, SGGreaterThan, SGLowerThan, SGAnd, SGOr
 #' @export
-SGSearchMetaModels <- function(query) {
+SGFilterMetaModels <- function(query = NULL) {
   if (is.null(query)) {
 	  res <- GET(paste(serverAddress, "metamodels", sep = ""))
 	  jsonstr <- rawToChar(res$content)

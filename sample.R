@@ -4,7 +4,7 @@ res <- SGGetMetaModelQueryFields()
 
 query <- SGQuery(SGContains("mmid", "FMU02664"), SGAnd(), SGContains("outputType", "Coniferous"))
 
-res <- SGSearchMetaModels(query)
+res <- SGFilterMetaModels(query)
 
 mmid <- res$mmid[1]
 

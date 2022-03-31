@@ -2,6 +2,7 @@
 
 export(SGAnd)
 export(SGContains)
+export(SGFilterMetaModels)
 export(SGGetMetaModelQueryFields)
 export(SGGreaterThan)
 export(SGLowerThan)
@@ -9,5 +10,4 @@ export(SGOr)
 export(SGPredict)
 export(SGPredictMC)
 export(SGQuery)
-export(SGSearchMetaModels)
 export(serverAddress)
