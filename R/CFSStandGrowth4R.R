@@ -28,6 +28,7 @@
 #'@export
 
 serverAddress <- "http://repicea.dynu.net/standgrowth/"
+#serverAddress <- "http://localhost:8080/"
 
 .welcomeMessage <- function() {
   packageStartupMessage("Welcome to CFSStandGrowth4R !")
@@ -157,12 +158,18 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
   }
 
   res <- GET(query)
+  succes <-  res$status_code == 200
 
   jsonstr <- rawToChar(res$content)
 
   json <- fromJSON(jsonstr)
 
-  return (json)
+  if (succes) {
+    df <- data.frame(t=as.numeric(names(json$predictions)), v=unlist(json$predictions))
+    return (df)
+  } else {
+    return(json$error)
+  }
 }
 
 #' Gets predictions using Monte-Carlo simulated parameters
