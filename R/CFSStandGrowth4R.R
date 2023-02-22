@@ -141,9 +141,7 @@ SGFilterMetaModels <- function(query = NULL) {
 #'           NONE (default) : no variance output
 #'           PARAMEST : variance output for parameter estimation
 #'           PARAMESTRE : variance output for parameter estimation including random effect
-#' @return a list with :
-#'           key "predictions" containing a list of predictions
-#'           (optional) key "predictionVariance" containing a list of variance values associated with the predictions
+#' @return a data.frame object with two columns. "age" is the age of the stand (yr) and "v" is the prediction (e.g. m3/ha)
 #' @seealso SGPredictMC
 #' @export
 SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
@@ -165,7 +163,7 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
   json <- fromJSON(jsonstr)
 
   if (succes) {
-    df <- data.frame(t=as.numeric(names(json$predictions)), v=unlist(json$predictions))
+    df <- data.frame(age=as.numeric(names(json$predictions)), v=unlist(json$predictions))
     return (df)
   } else {
     return(json$error)
@@ -179,7 +177,8 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
 #' @param step (optional int) The number of years to use from ageyrmin to ageyrmax for predictions (default is 1 if not specified)
 #' @param nbsub The number of subjects to simulate parameters for in range (1,1000)
 #' @param nbreal The number of realizations to simulate parameters for in range (1,1000)
-#' @return a list of nbreal elements each containing a list of nbsub elements each containing a list of predictions
+#' @return a data.frame object with four columns. "real" is the realization id
+#' "sub" is the subject id,  "age" is the age of the stand (yr) and "v" is the prediction (e.g. m3/ha)
 #' @seealso SGPredict
 #' @export
 SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) {
@@ -191,12 +190,42 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
   }
 
   res <- GET(query)
+  succes <-  res$status_code == 200
 
   jsonstr <- rawToChar(res$content)
 
   json <- fromJSON(jsonstr)
+  nbages <- NULL
 
-  return (json)
+  if (succes) {
+    i <- 1
+    for (real in 1:nbreal) {
+      for (sub in 1:nbsub) {
+        innerList <- json[[real]][[sub]]
+        if (is.null(nbages)) {
+          nbages <- length(innerList)
+          size <- nbreal * nbsub * nbages
+          realId <- rep(NA,size)
+          subId <- rep(NA,size)
+          ageId <- rep(NA,size)
+          pred <- rep(NA,size)
+        }
+        for (j in 1:length(innerList)) {
+          realId[i] <- real
+          subId[i] <- sub
+          ageId[i] <- as.integer(names(innerList)[j])
+          pred[i] <- as.numeric(innerList[[j]])
+          i <- i + 1
+        }
+      }
+    }
+    df <- data.frame(real = realId, sub = subId, age=ageId, v=pred)
+    return (df)
+#    return (df)
+  } else {
+    return(json$error)
+  }
+
 }
 
 
