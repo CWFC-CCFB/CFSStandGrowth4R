@@ -166,7 +166,15 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
     df <- data.frame(age=as.numeric(names(json$predictions)), v=unlist(json$predictions))
     return (df)
   } else {
-    return(json$error)
+    stop(.getErrorMessage(json))
+  }
+}
+
+.getErrorMessage <- function(jsonList) {
+  if (!is.null(jsonList$error)) {
+    return(jsonList$error)
+  } else {
+    return(jsonList$message)
   }
 }
 
@@ -221,9 +229,8 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
     }
     df <- data.frame(real = realId, sub = subId, age=ageId, v=pred)
     return (df)
-#    return (df)
   } else {
-    return(json$error)
+    stop(.getErrorMessage(json))
   }
 
 }
