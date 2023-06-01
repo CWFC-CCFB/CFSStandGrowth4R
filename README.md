@@ -68,6 +68,6 @@ predMS2_3Ouest <- SGPredict("QC_3OUEST_MS2_NoChange_AliveVolume_AllSpecies", 1, 
 and the predictions can be easily plotted:
 
 ~~~R
-plot(v ~ t, predMS2, ylim = c(0,250), main="MS2_FMU02664", type="l", lwd=3)
-plot(v ~ t, predMS2_3Ouest, ylim = c(0,250), main="MS2_3Ouest", type="l", lwd=3)
+plot(v ~ age, predMS2, ylim = c(0,250), main="MS2_FMU02664", type="l", lwd=3)
+plot(v ~ age, predMS2_3Ouest, ylim = c(0,250), main="MS2_3Ouest", type="l", lwd=3)
 ~~~
