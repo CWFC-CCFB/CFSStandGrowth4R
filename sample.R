@@ -3,22 +3,21 @@ library("CFSStandGrowth4R")
 fields <- SGGetMetaModelQueryFields()
 print(fields)
 
-query <- SGQuery(SGContains("stratumGroup", "MS2"), SGAnd(), SGContains("outputType", "AllSpecies"))
+query <- SGQuery(SGContains("geoDomain", "3OUEST"), SGAnd(), SGContains("outputType", "AllSpecies"))
 listMetaModels <- SGFilterMetaModels(query)
 print(listMetaModels$mmid)
 
-predMS2 <- SGPredict("QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecies", 1, 140, 1)
-predMS2$location <- "FMU02664"
+predv12 <- SGPredict("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v12_NoChange_AliveVolume_AllSpecies", 1, 140, 1)
+predv12$type <- "v12"
+predv34 <- SGPredict("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v34_NoChange_AliveVolume_AllSpecies", 1, 140, 1)
+predv34$type <- "v34"
 
-predMS2_3Ouest <- SGPredict("QC_3OUEST_MS2_NoChange_AliveVolume_AllSpecies", 1, 140, 1)
-predMS2_3Ouest$location <- "3West"
-
-pred <- rbind(predMS2, predMS2_3Ouest)
+pred <- rbind(predv12, predv34)
 
 require(ggplot2)
 textsize <- 18
 ggplot() +
-  geom_line(aes(x=age, y=v, group = location, col = location), pred, size = 2) +
+  geom_line(aes(x=age, y=v, group = type, col = type), pred, size = 2) +
   xlab("Age (yr)") +
   xlim(0,150) +
   ylab(bquote("Volume"~(m^3~ha^-1))) +
@@ -38,7 +37,7 @@ ggplot() +
         panel.border = element_blank())
 
 
-res <- SGPredictMC("QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecies", 1, 121, 10, 1, 500)
+res <- SGPredictMC("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v12_NoChange_AliveVolume_AllSpecies", 1, 140, 10, 1, 100)
 
 require(ggplot2)
 ggplot() +

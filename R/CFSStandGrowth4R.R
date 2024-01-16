@@ -48,7 +48,7 @@ serverAddress <- "http://repicea.dynu.net/standgrowth/"
 #' @export
 SGGetMetaModelQueryFields <- function() {
 
-  res <- GET(paste(serverAddress, "/metamodels/1", sep = ""))
+  res <- GET(paste(serverAddress, "metamodels/1", sep = ""))
 
   jsonstr <- rawToChar(res$content)
 
