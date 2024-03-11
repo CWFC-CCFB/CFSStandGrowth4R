@@ -2,8 +2,8 @@
 # This file is part of the CFSStandGrowth4R library located at :
 # https://github.com/CWFC-CCFB/CFSStandGrowth4R
 #
-# Copyright (C) 2022 Jean-François Lavoie and Mathieu Fortin
-# for Canadian Forest Service.
+# Copyright (C) 2022-2024 His Majesty the King in Right of Canada
+# Authors: Jean-François Lavoie and Mathieu Fortin, Canadian Forest Service.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,14 +18,6 @@
 #
 # Please see the license at http://www.gnu.org/copyleft/lesser.html.
 #############################################################
-
-#'
-#' The cache environment of this package
-#'
-#' This environment contains the objects that enable the connection to
-#' the gateway server.
-#'
-#'@export
 
 serverAddress <- "http://repicea.dynu.net/standgrowth/"
 #serverAddress <- "http://localhost:8080/"
@@ -42,9 +34,12 @@ serverAddress <- "http://repicea.dynu.net/standgrowth/"
   print("CFSStandGrowth4R shutting down")
 }
 
+#'
 #' Returns the available fields of the metamodels in the database that can be
 #' used in queries
+#'
 #' @return a list of field names
+#'
 #' @export
 SGGetMetaModelQueryFields <- function() {
 
@@ -179,7 +174,7 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
 }
 
 #' Gets predictions using Monte-Carlo simulated parameters
-#' @param mmid A string containing the mmid of the MetaModel#'
+#' @param mmid A string containing the mmid of the MetaModel
 #' @param ageyrmin The minimum age year to get the prediction set for
 #' @param ageyrmax The maximum age year to get the prediction set for (ageyrmax will be included in output values)
 #' @param step (optional int) The number of years to use from ageyrmin to ageyrmax for predictions (default is 1 if not specified)
@@ -234,5 +229,85 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
   }
 
 }
+
+#' Provide a Goodness-of-Fit Graph for a Particular MetaModel.
+#'
+#' The graph displays the simulations and the predictions of
+#' the metamodel instance.
+#'
+#' @param mmid A string containing the mmid of the MetaModel
+#' @param textSize the font size (20 by default)
+#' @param plotPred a boolean true to enable the plot of predicted values
+#' @param title an optional title for the graph (the mmid by default)
+#' @param ymax the upper bound of the y axis (250 by default)
+#'
+#' @return a ggplot2 graph
+#' @export
+SGGOFGraph <- function(mmid, textsize = 20, plotPred = T, title = mmid, ymax = 250) {
+  query <- paste0(serverAddress, "api/fitdata?mmid=", mmid)
+  res <- GET(query)
+  succes <-  res$status_code == 200
+  jsonstr <- rawToChar(res$content)
+  dataset <- fromJSON(jsonstr)
+
+
+  isVarianceAvailable <- "TotalVariance" %in% colnames(dataset)
+
+  if (isVarianceAvailable)
+  {
+    dataset$lower95 <- dataset$Estimate - dataset$TotalVariance^.5 * qnorm(0.975)
+    dataset[which(dataset$lower95 < 0), "lower95"] <- 0
+    dataset$upper95 <- dataset$Estimate + dataset$TotalVariance^.5 * qnorm(0.975)
+  }
+
+  dataset$age <- dataset$initialAgeYr + dataset$timeSinceInitialDateYr
+  dataset$stratum <- paste(dataset$OutputType,dataset$initialAgeYr,sep="_")
+  dataset$predL95 <- dataset$pred - dataset$predVar^.5 * qnorm(0.975)
+  dataset$predU95 <- dataset$pred + dataset$predVar^.5 * qnorm(0.975)
+  dataset[which(dataset$predL95 < 0), "predL95"] <- 0
+
+  datasetPred <- NULL
+  uniqueAge <- c()
+  for (i in 1:length(dataset[,1])) {
+    if (!dataset[i,"age"] %in% uniqueAge) {
+      datasetPred <- rbind(datasetPred, dataset[i,])
+      uniqueAge <- c(uniqueAge, dataset[i,"age"])
+    }
+  }
+  plot <- ggplot2::ggplot()
+  if (isVarianceAvailable)
+  {
+    plot <- plot +
+      ggplot2::geom_ribbon(ggplot2::aes(ymin=lower95, ymax=upper95, x=age, group=stratum), dataset, alpha = .1)
+  }
+
+  plot <- plot +
+    ggplot2::geom_line(ggplot2::aes(y=Estimate, x=age, group=stratum), dataset, lty = "dashed") +
+    ggplot2::xlab("Age (yr)") +
+    ggplot2::ylab(bquote('Volume'~(m^3~ha^{-1}))) +
+    ggplot2::ylim(0,ymax) +
+    ggplot2::xlim(0, 220) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(text = ggplot2::element_text(size=textsize),
+                   axis.text.x = ggplot2::element_text(size=textsize, color = "black"),
+                   axis.text.y = ggplot2::element_text(size=textsize, color = "black"),
+                   axis.line = ggplot2::element_line(color = "black"),
+                   panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor = ggplot2::element_blank(),
+                   panel.background = ggplot2::element_blank(),
+                   axis.ticks.length = ggplot2::unit(3,"mm"),
+                   panel.border = ggplot2::element_blank())
+  if (!is.null(title)) {
+    plot <- plot + ggplot2::ggtitle(title)
+  }
+  if (plotPred) {
+    plot <- plot + ggplot2::geom_ribbon(ggplot2::aes(ymin=predL95, ymax=predU95, x=age), datasetPred, alpha = .5) +
+      ggplot2::geom_line(ggplot2::aes(y=pred, x=age), datasetPred, lty = "solid", size = 1.5)
+  }
+  return(plot)
+
+}
+
+
 
 

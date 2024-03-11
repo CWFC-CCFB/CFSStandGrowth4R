@@ -1,18 +1,26 @@
+#'
+#' Code sample for CFSStandGrowth Web API
+#'
+
 library("CFSStandGrowth4R")
 
 fields <- SGGetMetaModelQueryFields()
 print(fields)
 
-query <- SGQuery(SGContains("geoDomain", "3OUEST"), SGAnd(), SGContains("outputType", "AllSpecies"))
+#query <- SGQuery(SGContains("geoDomain", "5a"), SGAnd(), SGContains("outputType", "AllSpecies"))
+query <- SGQuery(SGContains("geoDomain", "5a"))
+
 listMetaModels <- SGFilterMetaModels(query)
 print(listMetaModels$mmid)
 
-predv12 <- SGPredict("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v12_NoChange_AliveVolume_AllSpecies", 1, 140, 1)
-predv12$type <- "v12"
-predv34 <- SGPredict("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v34_NoChange_AliveVolume_AllSpecies", 1, 140, 1)
-predv34$type <- "v34"
+SGGOFGraph(listMetaModels$mmid[5], ymax = 150)
 
-pred <- rbind(predv12, predv34)
+predv5a <- SGPredict("QC_5a_6ab_STR_RE3_5a_NoChange_AliveVolume_AllSpecies", 1, 150, 1)
+predv5a$type <- "5a"
+predv6ab <- SGPredict("QC_5a_6ab_STR_RE3_6ab_NoChange_AliveVolume_AllSpecies", 1, 150, 1)
+predv6ab$type <- "6ab"
+
+pred <- rbind(predv5a, predv6ab)
 
 require(ggplot2)
 textsize <- 18
@@ -37,7 +45,7 @@ ggplot() +
         panel.border = element_blank())
 
 
-res <- SGPredictMC("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v12_NoChange_AliveVolume_AllSpecies", 1, 140, 10, 1, 100)
+res <- SGPredictMC("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v12_NoChange_AliveVolume_AllSpecies", 1, 140, 10, 1, 500)
 
 require(ggplot2)
 ggplot() +

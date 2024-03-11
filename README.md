@@ -25,6 +25,15 @@ Mathieu Fortin (mathieu.fortin@nrcan-rncan.gc.ca)
 
 Please report any bug at https://github.com/CWFC-CCFB/CFSStandGrowth4R/issues.
 
+## How to use it
+
+The package can be installed using the remotes package:
+
+~~~R
+library(remotes)
+remotes::install_github("CWFC-CCFB/CFSStandGrowth4R")
+~~~
+
 ## Example of code
 
 The code below provides the list of meta-models for the potential vegetation type "MS2" (balsam fir-white birch) whose response variable is the all-species volume of living trees.
