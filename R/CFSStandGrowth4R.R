@@ -140,7 +140,7 @@ SGFilterMetaModels <- function(query = NULL) {
 #' @seealso SGPredictMC
 #' @export
 SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
-  query <- paste(serverAddress, "api/predict?mmid=", mmid, "&ageyrmin=", ageyrmin, "&ageyrmax=", ageyrmax, sep = "")
+  query <- paste0(serverAddress, "api/predict?mmid=", mmid, "&ageyrmin=", ageyrmin, "&ageyrmax=", ageyrmax)
 
   if (!is.null(step)) {
     query <- paste(query, "&step=", step, sep = "")
@@ -158,8 +158,7 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
   json <- fromJSON(jsonstr)
 
   if (succes) {
-    df <- data.frame(age=as.numeric(names(json$predictions)), v=unlist(json$predictions))
-    return (df)
+    return (json)
   } else {
     stop(.getErrorMessage(json))
   }
@@ -201,29 +200,7 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
   nbages <- NULL
 
   if (succes) {
-    i <- 1
-    for (real in 1:nbreal) {
-      for (sub in 1:nbsub) {
-        innerList <- json[[real]][[sub]]
-        if (is.null(nbages)) {
-          nbages <- length(innerList)
-          size <- nbreal * nbsub * nbages
-          realId <- rep(NA,size)
-          subId <- rep(NA,size)
-          ageId <- rep(NA,size)
-          pred <- rep(NA,size)
-        }
-        for (j in 1:length(innerList)) {
-          realId[i] <- real
-          subId[i] <- sub
-          ageId[i] <- as.integer(names(innerList)[j])
-          pred[i] <- as.numeric(innerList[[j]])
-          i <- i + 1
-        }
-      }
-    }
-    df <- data.frame(real = realId, sub = subId, age=ageId, v=pred)
-    return (df)
+    return (json)
   } else {
     stop(.getErrorMessage(json))
   }
