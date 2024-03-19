@@ -197,7 +197,6 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
   jsonstr <- rawToChar(res$content)
 
   json <- fromJSON(jsonstr)
-  nbages <- NULL
 
   if (succes) {
     return (json)
@@ -207,6 +206,34 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
 
 }
 
+#'
+#' Provide the Final Sample of Parameter Estimates.
+#'
+#' The final sample is the one provided by a selection
+#' rate of the Markov chain, This function does not rely
+#' on a cache on the server end. The full meta-model must
+#' be deserialized and this may take a few seconds.
+#'
+#' @param mmid A string containing the mmid of the MetaModel
+#'
+#' @return a data.frame object
+#' @export
+SGGetFinalSample <- function(mmid) {
+  query <- paste0(serverAddress, "api/finalsample?mmid=", mmid)
+  res <- GET(query)
+  succes <-  res$status_code == 200
+  jsonstr <- rawToChar(res$content)
+  dataset <- fromJSON(jsonstr)
+
+  if (succes) {
+    return (dataset)
+  } else {
+    stop(.getErrorMessage(dataset))
+  }
+}
+
+
+#'
 #' Provide a Goodness-of-Fit Graph for a Particular MetaModel.
 #'
 #' The graph displays the simulations and the predictions of
@@ -227,6 +254,9 @@ SGGOFGraph <- function(mmid, textsize = 20, plotPred = T, title = mmid, ymax = 2
   jsonstr <- rawToChar(res$content)
   dataset <- fromJSON(jsonstr)
 
+  if (!succes) {
+    stop(.getErrorMessage(dataset))
+  }
 
   isVarianceAvailable <- "TotalVariance" %in% colnames(dataset)
 
