@@ -14,6 +14,7 @@ listMetaModels <- SGFilterMetaModels(query)
 print(listMetaModels$mmid)
 
 SGGOFGraph(listMetaModels$mmid[1], ymax = 200)
+a<- SGGetFinalSample(listMetaModels$mmid[1])
 
 predv5a_RE38 <- SGPredict(listMetaModels$mmid[1], 1, 150, 1)
 predv5a_RE38$ecotype <- "RE38"
