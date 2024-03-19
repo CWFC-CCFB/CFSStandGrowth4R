@@ -2,7 +2,7 @@
 % Please edit documentation in R/CFSStandGrowth4R.R
 \name{SGPredictMC}
 \alias{SGPredictMC}
-\title{Gets predictions using Monte-Carlo simulated parameters}
+\title{Gets Predictions using Monte-Carlo Simulated Parameters.}
 \usage{
 SGPredictMC(mmid, ageyrmin, ageyrmax, step = NULL, nbsub = 1, nbreal = 1)
 }
@@ -15,16 +15,19 @@ SGPredictMC(mmid, ageyrmin, ageyrmax, step = NULL, nbsub = 1, nbreal = 1)
 
 \item{step}{(optional int) The number of years to use from ageyrmin to ageyrmax for predictions (default is 1 if not specified)}
 
-\item{nbsub}{The number of subjects to simulate parameters for in range (1,1000)}
+\item{nbsub}{The number of subjects to simulate parameters for in range (0,1000). Zero disables the
+variability due to the random effect.}
 
-\item{nbreal}{The number of realizations to simulate parameters for in range (1,1000)}
+\item{nbreal}{The number of realizations to simulate parameters for in range (0,1000). Zero disables
+the variability due to the parameter estimates.}
 }
 \value{
-a data.frame object with four columns. "real" is the realization id
-"sub" is the subject id,  "age" is the age of the stand (yr) and "v" is the prediction (e.g. m3/ha)
+a data.frame object with four columns (RealizationID, SubjectID, AgeYr, Pred).
 }
 \description{
-Gets predictions using Monte-Carlo simulated parameters
+The function simulates deviates for the parameter estimates. The variability of the
+random effects and the parameter estimates can be disabled by setting the nbsub and
+nbreal arguments to zero, respectively.
 }
 \seealso{
 SGPredict

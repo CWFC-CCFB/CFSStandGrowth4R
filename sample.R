@@ -131,7 +131,7 @@ ggplot() +
 dev.off()
 
 
-res <- SGPredictMC("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v12_NoChange_AliveVolume_AllSpecies", 1, 140, 10, 1, 500)
+res <- SGPredictMC("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v12_NoChange_AliveVolume_AllSpecies", 10, 40, 10, 1, 3)
 
 require(ggplot2)
 ggplot() +

@@ -172,15 +172,20 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
   }
 }
 
-#' Gets predictions using Monte-Carlo simulated parameters
+#' Gets Predictions using Monte-Carlo Simulated Parameters.
+#'
+#' The function simulates deviates for the parameter estimates. The variability of the
+#' random effects and the parameter estimates can be disabled by setting the nbsub and
+#' nbreal arguments to zero, respectively.
 #' @param mmid A string containing the mmid of the MetaModel
 #' @param ageyrmin The minimum age year to get the prediction set for
 #' @param ageyrmax The maximum age year to get the prediction set for (ageyrmax will be included in output values)
 #' @param step (optional int) The number of years to use from ageyrmin to ageyrmax for predictions (default is 1 if not specified)
-#' @param nbsub The number of subjects to simulate parameters for in range (1,1000)
-#' @param nbreal The number of realizations to simulate parameters for in range (1,1000)
-#' @return a data.frame object with four columns. "real" is the realization id
-#' "sub" is the subject id,  "age" is the age of the stand (yr) and "v" is the prediction (e.g. m3/ha)
+#' @param nbsub The number of subjects to simulate parameters for in range (0,1000). Zero disables the
+#' variability due to the random effect.
+#' @param nbreal The number of realizations to simulate parameters for in range (0,1000). Zero disables
+#' the variability due to the parameter estimates.
+#' @return a data.frame object with four columns (RealizationID, SubjectID, AgeYr, Pred).
 #' @seealso SGPredict
 #' @export
 SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) {
