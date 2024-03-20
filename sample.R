@@ -13,8 +13,10 @@ query <- SGQuery(SGContains("geoDomain", "5a"))
 listMetaModels <- SGFilterMetaModels(query)
 print(listMetaModels$mmid)
 
-SGGOFGraph(listMetaModels$mmid[1], ymax = 200)
-a<- SGGetFinalSample(listMetaModels$mmid[1])
+SGGetMetaData(listMetaModels$mmid[1])
+
+#SGGOFGraph(listMetaModels$mmid[1], ymax = 200)
+#a<- SGGetFinalSample(listMetaModels$mmid[1])
 
 predv5a_RE38 <- SGPredict(listMetaModels$mmid[1], 1, 150, 1)
 predv5a_RE38$ecotype <- "RE38"
@@ -32,7 +34,14 @@ predv6ab_RE39 <- SGPredict(listMetaModels$mmid[4], 1, 150, 1)
 predv6ab_RE39$ecotype <- "RE39"
 predv6ab_RE39$ecoreg <- "6ab"
 
-pred <- rbind(predv5a_RE38, predv5a_RE39, predv6ab_RE38, predv6ab_RE39)
+predv5a_RS38 <- SGPredict(listMetaModels$mmid[5], 1, 150, 1)
+predv5a_RS38$ecotype <- "RS38"
+predv5a_RS38$ecoreg <- "5a"
+
+
+
+
+pred <- rbind(predv5a_RE38, predv5a_RE39, predv6ab_RE38, predv6ab_RE39, predv5a_RS38)
 
 require(ggplot2)
 require(Cairo)
@@ -42,6 +51,7 @@ ggplot() +
   geom_line(aes(x=AgeYr, y=Pred, group = ecotype, col = ecotype), pred[which(pred$ecoreg == "5a"),], size = 2) +
   xlab("Age (yr)") +
   xlim(0,150) +
+  ylim(0,100) +
   ylab(bquote("Volume"~(m^3~ha^-1))) +
   ggtitle("Ecoregion 5a") +
   theme_bw() +
@@ -65,6 +75,7 @@ ggplot() +
   geom_line(aes(x=AgeYr, y=Pred, group = ecotype, col = ecotype), pred[which(pred$ecoreg == "6ab"),], size = 2) +
   xlab("Age (yr)") +
   xlim(0,150) +
+  ylim(0,100) +
   ylab(bquote("Volume"~(m^3~ha^-1))) +
   ggtitle("Ecoregion 6ab") +
   theme_bw() +
@@ -89,6 +100,7 @@ ggplot() +
   geom_line(aes(x=AgeYr, y=Pred, group = ecoreg, col = ecoreg), pred[which(pred$ecotype == "RE38"),], size = 2) +
   xlab("Age (yr)") +
   xlim(0,150) +
+  ylim(0,100) +
   ylab(bquote("Volume"~(m^3~ha^-1))) +
   ggtitle("Ecotype RE38") +
   theme_bw() +
@@ -112,6 +124,7 @@ ggplot() +
   geom_line(aes(x=AgeYr, y=Pred, group = ecoreg, col = ecoreg), pred[which(pred$ecotype == "RE39"),], size = 2) +
   xlab("Age (yr)") +
   xlim(0,150) +
+  ylim(0,100) +
   ylab(bquote("Volume"~(m^3~ha^-1))) +
   ggtitle("Ecotype RE39") +
   theme_bw() +

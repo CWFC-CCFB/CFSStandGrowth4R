@@ -237,6 +237,26 @@ SGGetFinalSample <- function(mmid) {
   }
 }
 
+#'
+#' Provide the Meta-Data of a particular Meta-Model.
+#'
+#' @param mmid A string containing the mmid of the meta-model
+#'
+#' @return a list object
+#' @export
+SGGetMetaData <- function(mmid) {
+  query <- paste0(serverAddress, "api/metadata?mmid=", mmid)
+  res <- GET(query)
+  succes <-  res$status_code == 200
+  jsonstr <- rawToChar(res$content)
+  dataset <- fromJSON(jsonstr)
+
+  if (succes) {
+    return (dataset)
+  } else {
+    stop(.getErrorMessage(dataset))
+  }
+}
 
 #'
 #' Provide a Goodness-of-Fit Graph for a Particular MetaModel.
