@@ -1,7 +1,7 @@
 Package: CFSStandGrowth4R
 Type: Package
 Title: Connect to the 'CFSStandGrowth' API
-Version: 1.2.0
+Version: 1.3.0
 Author: Jean-François Lavoie and Mathieu Fortin, Canadian Wood Fibre Centre, Canadian Forest Service
 Maintainer: Mathieu Fortin <mathieu.fortin.re@gmail.com>
 Copyright: His Majesty the King in Right of Canada
