@@ -9,13 +9,13 @@ SGGOFGraph(mmid, textsize = 20, plotPred = T, title = mmid, ymax = 250)
 \arguments{
 \item{mmid}{A string containing the mmid of the MetaModel}
 
+\item{textsize}{the font size (20 by default)}
+
 \item{plotPred}{a boolean true to enable the plot of predicted values}
 
 \item{title}{an optional title for the graph (the mmid by default)}
 
 \item{ymax}{the upper bound of the y axis (250 by default)}
-
-\item{textSize}{the font size (20 by default)}
 }
 \value{
 a ggplot2 graph

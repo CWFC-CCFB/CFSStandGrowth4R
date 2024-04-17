@@ -67,16 +67,24 @@ For instance, the following mmid "QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecie
 - The meta-model was fitted on the all-species volume (AllSpecies)
 
 
-Predictions from particular meta-models can be generated using the SGPredict function:
+The goodness of fit of a particular meta-model can be visualized using the SGGOFGraph 
+function. The SGPredict function provides predictions from particular meta-models as in
+the folling example:
 
 ~~~R
-predMS2 <- SGPredict("QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecies", 1, 150, 1)
-predMS2_3Ouest <- SGPredict("QC_3OUEST_MS2_NoChange_AliveVolume_AllSpecies", 1, 150, 1)
+SGGOFGraph("QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecies")
+predMS2_FMU02664 <- SGPredict("QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecies", 1, 150, 1)
+
+SGGOFGraph("QC_6OUEST_STR_MS2_6OUEST_NoChange_AliveVolume_AllSpecies")
+predMS2_6Ouest <- SGPredict("QC_6OUEST_STR_MS2_6OUEST_NoChange_AliveVolume_AllSpecies", 1, 150, 1)
 ~~~
 
-and the predictions can be easily plotted:
+Predictions can be easily plotted:
 
 ~~~R
-plot(v ~ age, predMS2, ylim = c(0,250), main="MS2_FMU02664", type="l", lwd=3)
-plot(v ~ age, predMS2_3Ouest, ylim = c(0,250), main="MS2_3Ouest", type="l", lwd=3)
+predMS2_FMU02664$zone <- "FMU02664"
+predMS2_6Ouest$zone <- "6Ouest"
+predMS2 <- rbind(predMS2_FMU02664, predMS2_6Ouest)
+require(ggplot2)
+ggplot() + geom_line(aes(x=AgeYr, y=Pred, col=zone), predMS2)
 ~~~

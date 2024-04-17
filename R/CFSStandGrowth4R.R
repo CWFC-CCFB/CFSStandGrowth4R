@@ -20,7 +20,7 @@
 #############################################################
 
 serverAddress <- "http://repicea.dynu.net/standgrowth/"
-#serverAddress <- "http://localhost:8080/"
+#serverAddress <- "http://localhost:50101/"
 
 .welcomeMessage <- function() {
   packageStartupMessage("Welcome to CFSStandGrowth4R !")
@@ -43,11 +43,11 @@ serverAddress <- "http://repicea.dynu.net/standgrowth/"
 #' @export
 SGGetMetaModelQueryFields <- function() {
 
-  res <- GET(paste(serverAddress, "metamodels/1", sep = ""))
+  res <- httr::GET(paste(serverAddress, "metamodels/1", sep = ""))
 
   jsonstr <- rawToChar(res$content)
 
-  json <- fromJSON(jsonstr)
+  json <- jsonlite::fromJSON(jsonstr)
 
   # remove fields that cannot be used in queries
   json$'dataSourceYears'= NULL
@@ -70,19 +70,25 @@ SGOr <- function() {
 }
 
 #' Returns the Contains term for use in query construction
-#' Note : This corresponds to the LIKE SQL operator which is case sensitive
+#' This corresponds to the LIKE SQL operator which is case sensitive.
+#' @param field one of the fields listed by the SGGetMetaModelQueryFields function
+#' @param value the value for this field
 #' @export
 SGContains <- function(field, value) {
   return (paste(field, ":", value, sep=""))
 }
 
 #' Returns the LowerThan term for use in query construction
+#' @param field one of the fields listed by the SGGetMetaModelQueryFields function
+#' @param value the value for this field
 #' @export
 SGLowerThan <- function(field, value) {
   return (paste(field, "<", value, sep=""))
 }
 
 #' Returns the GreaterThan term for use in query construction
+#' @param field one of the fields listed by the SGGetMetaModelQueryFields function
+#' @param value the value for this field
 #' @export
 SGGreaterThan <- function(field, value) {
   return (paste(field, ">", value, sep=""))
@@ -91,15 +97,16 @@ SGGreaterThan <- function(field, value) {
 #' Constructs a query using the provided terms and predicates
 #' A query is a series of one or more terms separated by predicates.
 #' Example : mmid contains "foo" AND outputType contains "All" OR nbRealizations > 1000
+#' @param ... the multiple operators of the query
 #' @export
 SGQuery <- function(...) {
   return (paste(..., sep = ""))
 }
 
-#' Searches the metamodel database for matches to the specified query and returns
-#' the matching metamodels
+#' Searches the metamodel database for matches to the specified query
+#'
+#'
 #' @param query a string containing the query.  Null will return all metamodels in the database.
-
 #' Queries should be created using the
 #' query utility methods.
 #'
@@ -114,15 +121,14 @@ SGQuery <- function(...) {
 #' @export
 SGFilterMetaModels <- function(query = NULL) {
   if (is.null(query)) {
-	  res <- GET(paste(serverAddress, "metamodels", sep = ""))
+	  res <- httr::GET(paste(serverAddress, "metamodels", sep = ""))
 	  jsonstr <- rawToChar(res$content)
-	  json <- fromJSON(jsonstr)
+	  json <- jsonlite::fromJSON(jsonstr)
 	  return (json$'_embedded'$'metamodels')
-  }
-  else {
-    res <- GET(paste(serverAddress, "metamodels/filter?query=", query, sep = ""))
+  } else {
+    res <- httr::GET(paste(serverAddress, "metamodels/filter?query=", query, sep = ""))
     jsonstr <- rawToChar(res$content)
-    json <- fromJSON(jsonstr)
+    json <- jsonlite::fromJSON(jsonstr)
     return (json)
   }
 }
@@ -150,12 +156,12 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
     query <- paste(query, "&varout=", varout, sep = "")
   }
 
-  res <- GET(query)
+  res <- httr::GET(query)
   succes <-  res$status_code == 200
 
   jsonstr <- rawToChar(res$content)
 
-  json <- fromJSON(jsonstr)
+  json <- jsonlite::fromJSON(jsonstr)
 
   if (succes) {
     return (json)
@@ -196,12 +202,12 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
     query <- paste(query, "&step=", step, sep = "")
   }
 
-  res <- GET(query)
+  res <- httr::GET(query)
   succes <-  res$status_code == 200
 
   jsonstr <- rawToChar(res$content)
 
-  json <- fromJSON(jsonstr)
+  json <- jsonlite::fromJSON(jsonstr)
 
   if (succes) {
     return (json)
@@ -225,10 +231,10 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
 #' @export
 SGGetFinalSample <- function(mmid) {
   query <- paste0(serverAddress, "api/finalsample?mmid=", mmid)
-  res <- GET(query)
+  res <- httr::GET(query)
   succes <-  res$status_code == 200
   jsonstr <- rawToChar(res$content)
-  dataset <- fromJSON(jsonstr)
+  dataset <- jsonlite::fromJSON(jsonstr)
 
   if (succes) {
     return (dataset)
@@ -246,10 +252,10 @@ SGGetFinalSample <- function(mmid) {
 #' @export
 SGGetMetaData <- function(mmid) {
   query <- paste0(serverAddress, "api/metadata?mmid=", mmid)
-  res <- GET(query)
+  res <- httr::GET(query)
   succes <-  res$status_code == 200
   jsonstr <- rawToChar(res$content)
-  dataset <- fromJSON(jsonstr)
+  dataset <- jsonlite::fromJSON(jsonstr)
 
   if (succes) {
     return (dataset)
@@ -265,7 +271,7 @@ SGGetMetaData <- function(mmid) {
 #' the metamodel instance.
 #'
 #' @param mmid A string containing the mmid of the MetaModel
-#' @param textSize the font size (20 by default)
+#' @param textsize the font size (20 by default)
 #' @param plotPred a boolean true to enable the plot of predicted values
 #' @param title an optional title for the graph (the mmid by default)
 #' @param ymax the upper bound of the y axis (250 by default)
@@ -274,10 +280,10 @@ SGGetMetaData <- function(mmid) {
 #' @export
 SGGOFGraph <- function(mmid, textsize = 20, plotPred = T, title = mmid, ymax = 250) {
   query <- paste0(serverAddress, "api/fitdata?mmid=", mmid)
-  res <- GET(query)
+  res <- httr::GET(query)
   succes <-  res$status_code == 200
   jsonstr <- rawToChar(res$content)
-  dataset <- fromJSON(jsonstr)
+  dataset <- jsonlite::fromJSON(jsonstr)
 
   if (!succes) {
     stop(.getErrorMessage(dataset))
@@ -287,15 +293,15 @@ SGGOFGraph <- function(mmid, textsize = 20, plotPred = T, title = mmid, ymax = 2
 
   if (isVarianceAvailable)
   {
-    dataset$lower95 <- dataset$Estimate - dataset$TotalVariance^.5 * qnorm(0.975)
+    dataset$lower95 <- dataset$Estimate - dataset$TotalVariance^.5 * stats::qnorm(0.975)
     dataset[which(dataset$lower95 < 0), "lower95"] <- 0
-    dataset$upper95 <- dataset$Estimate + dataset$TotalVariance^.5 * qnorm(0.975)
+    dataset$upper95 <- dataset$Estimate + dataset$TotalVariance^.5 * stats::qnorm(0.975)
   }
 
   dataset$age <- dataset$initialAgeYr + dataset$timeSinceInitialDateYr
   dataset$stratum <- paste(dataset$OutputType,dataset$initialAgeYr,sep="_")
-  dataset$predL95 <- dataset$pred - dataset$predVar^.5 * qnorm(0.975)
-  dataset$predU95 <- dataset$pred + dataset$predVar^.5 * qnorm(0.975)
+  dataset$predL95 <- dataset$pred - dataset$predVar^.5 * stats::qnorm(0.975)
+  dataset$predU95 <- dataset$pred + dataset$predVar^.5 * stats::qnorm(0.975)
   dataset[which(dataset$predL95 < 0), "predL95"] <- 0
 
   datasetPred <- NULL

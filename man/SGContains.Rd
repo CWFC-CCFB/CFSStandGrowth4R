@@ -3,11 +3,16 @@
 \name{SGContains}
 \alias{SGContains}
 \title{Returns the Contains term for use in query construction
-Note : This corresponds to the LIKE SQL operator which is case sensitive}
+This corresponds to the LIKE SQL operator which is case sensitive.}
 \usage{
 SGContains(field, value)
 }
+\arguments{
+\item{field}{one of the fields listed by the SGGetMetaModelQueryFields function}
+
+\item{value}{the value for this field}
+}
 \description{
 Returns the Contains term for use in query construction
-Note : This corresponds to the LIKE SQL operator which is case sensitive
+This corresponds to the LIKE SQL operator which is case sensitive.
 }

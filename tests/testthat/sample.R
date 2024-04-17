@@ -8,7 +8,7 @@ fields <- SGGetMetaModelQueryFields()
 print(fields)
 
 #query <- SGQuery(SGContains("geoDomain", "5a"), SGAnd(), SGContains("outputType", "AllSpecies"))
-query <- SGQuery(SGContains("geoDomain", "5a"))
+query <- SGQuery(SGContains("geoDomain", "3OUEST"))
 
 listMetaModels <- SGFilterMetaModels(query)
 print(listMetaModels$mmid)
@@ -44,9 +44,9 @@ predv5a_RS38$ecoreg <- "5a"
 pred <- rbind(predv5a_RE38, predv5a_RE39, predv6ab_RE38, predv6ab_RE39, predv5a_RS38)
 
 require(ggplot2)
-require(Cairo)
+#require(Cairo)
 textsize <- 18
-Cairo(file="Ecoregion5a.png")
+#Cairo(file="Ecoregion5a.png")
 ggplot() +
   geom_line(aes(x=AgeYr, y=Pred, group = ecotype, col = ecotype), pred[which(pred$ecoreg == "5a"),], size = 2) +
   xlab("Age (yr)") +
@@ -68,9 +68,9 @@ ggplot() +
         legend.position = c(0.70,0.25),
         legend.background = element_blank(),
         panel.border = element_blank())
-dev.off()
+#dev.off()
 
-Cairo(file="Ecoregion6ab.png")
+#Cairo(file="Ecoregion6ab.png")
 ggplot() +
   geom_line(aes(x=AgeYr, y=Pred, group = ecotype, col = ecotype), pred[which(pred$ecoreg == "6ab"),], size = 2) +
   xlab("Age (yr)") +
@@ -92,10 +92,10 @@ ggplot() +
         legend.position = c(0.70,0.25),
         legend.background = element_blank(),
         panel.border = element_blank())
-dev.off()
+#dev.off()
 
 
-Cairo(file="EcotypeRE38.png")
+#Cairo(file="EcotypeRE38.png")
 ggplot() +
   geom_line(aes(x=AgeYr, y=Pred, group = ecoreg, col = ecoreg), pred[which(pred$ecotype == "RE38"),], size = 2) +
   xlab("Age (yr)") +
@@ -117,9 +117,9 @@ ggplot() +
         legend.position = c(0.70,0.25),
         legend.background = element_blank(),
         panel.border = element_blank())
-dev.off()
+#dev.off()
 
-Cairo(file="EcotypeRE39.png")
+#Cairo(file="EcotypeRE39.png")
 ggplot() +
   geom_line(aes(x=AgeYr, y=Pred, group = ecoreg, col = ecoreg), pred[which(pred$ecotype == "RE39"),], size = 2) +
   xlab("Age (yr)") +
@@ -141,7 +141,7 @@ ggplot() +
         legend.position = c(0.70,0.25),
         legend.background = element_blank(),
         panel.border = element_blank())
-dev.off()
+#dev.off()
 
 
 res <- SGPredictMC("QC_3OUEST_STR_3O_BjR_MS_BpFx_NA_v12_NoChange_AliveVolume_AllSpecies", 10, 40, 10, 1, 3)

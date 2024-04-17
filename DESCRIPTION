@@ -5,17 +5,19 @@ Version: 1.2.0
 Author: Jean-François Lavoie and Mathieu Fortin, Canadian Wood Fibre Centre, Canadian Forest Service
 Maintainer: Mathieu Fortin <mathieu.fortin.re@gmail.com>
 Copyright: His Majesty the King in Right of Canada
-Description: To be completed
+Description: A client for the CFSStandGrowth Web API. The API contains a database
+    of meta-models which can be queried through the client. Meta-model predictions can 
+    also be produced in deterministic or stochastic mode.
 URL: https://github.com/CWFC-CCFB/CFSStandGrowth4R
-Imports:
-License: GPL-3
+License: LGPL-3 + file LICENSE
 BugReports: https://github.com/CWFC-CCFB/CFSStandGrowth4R/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.0
 Suggests: 
-    testthat
-Depends: 
-  ggplot2 (>= 3.3),
-  httr (>= 1.4),
-  jsonlite (>= 1.8)
+    testthat (>= 3.0.0)
+Imports: 
+    ggplot2 (>= 3.3),
+    httr (>= 1.4),
+    jsonlite (>= 1.8)
+Config/testthat/edition: 3

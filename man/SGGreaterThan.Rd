@@ -6,6 +6,11 @@
 \usage{
 SGGreaterThan(field, value)
 }
+\arguments{
+\item{field}{one of the fields listed by the SGGetMetaModelQueryFields function}
+
+\item{value}{the value for this field}
+}
 \description{
 Returns the GreaterThan term for use in query construction
 }

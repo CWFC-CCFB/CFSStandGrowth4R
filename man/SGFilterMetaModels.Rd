@@ -2,8 +2,7 @@
 % Please edit documentation in R/CFSStandGrowth4R.R
 \name{SGFilterMetaModels}
 \alias{SGFilterMetaModels}
-\title{Searches the metamodel database for matches to the specified query and returns
-the matching metamodels}
+\title{Searches the metamodel database for matches to the specified query}
 \usage{
 SGFilterMetaModels(query = NULL)
 }
@@ -22,8 +21,7 @@ then a second query for TermC and then combine the results together.}
 a dataframe containing all metamodels matching the query
 }
 \description{
-Searches the metamodel database for matches to the specified query and returns
-the matching metamodels
+Searches the metamodel database for matches to the specified query
 }
 \seealso{
 SGQuery, SGContains, SGGreaterThan, SGLowerThan, SGAnd, SGOr

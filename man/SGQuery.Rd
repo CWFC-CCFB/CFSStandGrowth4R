@@ -8,6 +8,9 @@ Example : mmid contains "foo" AND outputType contains "All" OR nbRealizations > 
 \usage{
 SGQuery(...)
 }
+\arguments{
+\item{...}{the multiple operators of the query}
+}
 \description{
 Constructs a query using the provided terms and predicates
 A query is a series of one or more terms separated by predicates.
