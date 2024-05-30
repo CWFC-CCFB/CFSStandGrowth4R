@@ -217,6 +217,32 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
 
 }
 
+#' Provide the Status of the Web API.
+#'
+#' @return a data.frame object with four columns (RealizationID, SubjectID, AgeYr, Pred).
+#'
+#' @export
+SGStatus <- function() {
+
+  query <- paste0(serverAddress, "api/status")
+
+  res <- httr::GET(query)
+  succes <-  res$status_code == 200
+
+  jsonstr <- rawToChar(res$content)
+
+  json <- jsonlite::fromJSON(jsonstr)
+
+  if (succes) {
+    return (json)
+  } else {
+    stop(.getErrorMessage(json))
+  }
+
+}
+
+
+
 #'
 #' Provide the Final Sample of Parameter Estimates.
 #'

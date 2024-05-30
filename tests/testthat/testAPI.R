@@ -18,7 +18,7 @@ query <- SGQuery(SGContains("geoDomain", "6OUEST"))
 listMetaModels <- SGFilterMetaModels(query)
 
 test_that("Check model list", {
-  expect_equal("QC_6OUEST_STR_ME1_6OUEST_NoChange_AliveVolume_AllSpecies" %in% listMetaModels$mmid, TRUE)
+  expect_equal("QC_6OUEST_ME13_NoChange_AliveVolume_AllSpecies" %in% listMetaModels$mmid, TRUE)
 })
 
 metaData <- SGGetMetaData(listMetaModels$mmid[1])

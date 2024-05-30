@@ -4,14 +4,24 @@
 
 library("CFSStandGrowth4R")
 
+SGStatus()
+
 fields <- SGGetMetaModelQueryFields()
 print(fields)
 
-#query <- SGQuery(SGContains("geoDomain", "5a"), SGAnd(), SGContains("outputType", "AllSpecies"))
+nbModelsBySubDomain <- NULL
+for (subDomain in c("1", "2OUEST", "2EST", "3OUEST", "3EST", "4OUEST", "4EST", "5OUEST", "5EST", "6OUEST", "6EST")) {
+  query <- SGQuery(SGContains("geoDomain", subDomain), SGAnd(), SGContains("outputType", "AllSpecies"))
+  listMetaModels <- SGFilterMetaModels(query)
+  nbModelsBySubDomain <- rbind(nbModelsBySubDomain, data.frame(subDomain = subDomain, nb = nrow(listMetaModels)))
+}
+
+
+
+
+SGGOFGraph(listMetaModels$mmid[16], ymax = 350)
 query <- SGQuery(SGContains("geoDomain", "3OUEST"))
 
-listMetaModels <- SGFilterMetaModels(query)
-print(listMetaModels$mmid)
 
 SGGetMetaData(listMetaModels$mmid[1])
 
