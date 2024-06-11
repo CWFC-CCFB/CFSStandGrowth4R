@@ -12,7 +12,7 @@ The CFSStandGrowth4R package makes it possible to
 
 ## License
 
-The CFSStandGrowth4R package is licensed under the GNU Lesser General Public License 2.1.
+The CFSStandGrowth4R package is licensed under the GNU Lesser General Public License 3 (LGPL-3).
 
 ## Developers
 
