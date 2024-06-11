@@ -4,14 +4,12 @@
 \alias{SGGOFGraph}
 \title{Provide a Goodness-of-Fit Graph for a Particular MetaModel.}
 \usage{
-SGGOFGraph(mmid, textsize = 20, plotPred = T, title = mmid, ymax = 250)
+SGGOFGraph(mmid, textsize = 20, title = mmid, ymax = 250)
 }
 \arguments{
 \item{mmid}{A string containing the mmid of the MetaModel}
 
 \item{textsize}{the font size (20 by default)}
-
-\item{plotPred}{a boolean true to enable the plot of predicted values}
 
 \item{title}{an optional title for the graph (the mmid by default)}
 

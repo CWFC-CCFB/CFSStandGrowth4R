@@ -29,7 +29,7 @@ test_that("Check meta data", {
 prediction <- SGPredict(listMetaModels$mmid[1], 1, 150, 1)
 test_that("Check predictions", {
   expect_equal(nrow(prediction), 150)
-  expect_equal(ncol(prediction), 2)
+  expect_equal(ncol(prediction), 3)
 })
 
 predictionMC <- SGPredictMC(listMetaModels$mmid[1], 1, 150, 1, nbsub = 2, nbreal = 4)

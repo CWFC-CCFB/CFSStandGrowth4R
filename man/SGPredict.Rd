@@ -4,7 +4,14 @@
 \alias{SGPredict}
 \title{Gets a set of predictions from the specified metamodel}
 \usage{
-SGPredict(mmid, ageyrmin, ageyrmax, step = NULL, varout = NULL)
+SGPredict(
+  mmid,
+  ageyrmin,
+  ageyrmax,
+  step = NULL,
+  varout = "PARAMEST",
+  includeRegLag = T
+)
 }
 \arguments{
 \item{mmid}{A string containing the mmid of the MetaModel#'}
@@ -16,9 +23,11 @@ SGPredict(mmid, ageyrmin, ageyrmax, step = NULL, varout = NULL)
 \item{step}{(optional int) The number of years to use from ageyrmin to ageyrmax for predictions (default is 1 if not specified)}
 
 \item{varout}{(optional) A string specifying the variance output mode from the following :
-NONE (default) : no variance output
-PARAMEST : variance output for parameter estimation
+NONE : no variance output
+PARAMEST (default) : variance output for parameter estimation
 PARAMESTRE : variance output for parameter estimation including random effect}
+
+\item{includeRegLag}{a logical; TRUE to include the regeneration lag or false otherwise (default is TRUE)}
 }
 \value{
 a data.frame object with two columns. "age" is the age of the stand (yr) and "v" is the prediction (e.g. m3/ha)

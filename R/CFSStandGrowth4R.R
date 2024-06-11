@@ -133,41 +133,46 @@ SGFilterMetaModels <- function(query = NULL) {
   }
 }
 
+.sendQueryAndRetrieveResult <- function(query) {
+  res <- httr::GET(query)
+  succes <-  res$status_code == 200
+  jsonstr <- rawToChar(res$content)
+  json <- jsonlite::fromJSON(jsonstr)
+  if (!succes) {
+    stop(.getErrorMessage(json))
+  }
+  return(json)
+}
+
 #' Gets a set of predictions from the specified metamodel
 #' @param mmid A string containing the mmid of the MetaModel#'
 #' @param ageyrmin The minimum age year to get the prediction set for
 #' @param ageyrmax The maximum age year to get the prediction set for (ageyrmax will be included in output values)
 #' @param step (optional int) The number of years to use from ageyrmin to ageyrmax for predictions (default is 1 if not specified)
 #' @param varout (optional) A string specifying the variance output mode from the following :
-#'           NONE (default) : no variance output
-#'           PARAMEST : variance output for parameter estimation
+#'           NONE : no variance output
+#'           PARAMEST (default) : variance output for parameter estimation
 #'           PARAMESTRE : variance output for parameter estimation including random effect
+#' @param includeRegLag a logical; TRUE to include the regeneration lag or false otherwise (default is TRUE)
 #' @return a data.frame object with two columns. "age" is the age of the stand (yr) and "v" is the prediction (e.g. m3/ha)
 #' @seealso SGPredictMC
 #' @export
-SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
+SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout="PARAMEST", includeRegLag = T) {
   query <- paste0(serverAddress, "api/predict?mmid=", mmid, "&ageyrmin=", ageyrmin, "&ageyrmax=", ageyrmax)
-
   if (!is.null(step)) {
     query <- paste(query, "&step=", step, sep = "")
   }
-
   if (!is.null(varout)) {
     query <- paste(query, "&varout=", varout, sep = "")
   }
+  pred <- .sendQueryAndRetrieveResult(query)
 
-  res <- httr::GET(query)
-  succes <-  res$status_code == 200
-
-  jsonstr <- rawToChar(res$content)
-
-  json <- jsonlite::fromJSON(jsonstr)
-
-  if (succes) {
-    return (json)
-  } else {
-    stop(.getErrorMessage(json))
+  if (includeRegLag) {
+    query <- paste0(serverAddress, "api/reglag?mmid=", mmid)
+    regLag <- .sendQueryAndRetrieveResult(query)
+    pred$AgeYr <- pred$AgeYr + regLag$regLagYr
   }
+  return (pred)
 }
 
 .getErrorMessage <- function(jsonList) {
@@ -191,30 +196,24 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout=NULL) {
 #' variability due to the random effect.
 #' @param nbreal The number of realizations to simulate parameters for in range (0,1000). Zero disables
 #' the variability due to the parameter estimates.
+#' @param includeRegLag a logical; TRUE to include the regeneration lag or false otherwise (default is TRUE)
 #' @return a data.frame object with four columns (RealizationID, SubjectID, AgeYr, Pred).
 #' @seealso SGPredict
 #' @export
-SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) {
-
+SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1, includeRegLag = T) {
   query <- paste(serverAddress, "api/predictmc?mmid=", mmid, "&ageyrmin=", ageyrmin, "&ageyrmax=", ageyrmax, "&nbsub=", nbsub, "&nbreal=", nbreal, sep = "")
-
   if (!is.null(step)) {
     query <- paste(query, "&step=", step, sep = "")
   }
+  pred <- .sendQueryAndRetrieveResult(query)
 
-  res <- httr::GET(query)
-  succes <-  res$status_code == 200
-
-  jsonstr <- rawToChar(res$content)
-
-  json <- jsonlite::fromJSON(jsonstr)
-
-  if (succes) {
-    return (json)
-  } else {
-    stop(.getErrorMessage(json))
+  if (includeRegLag) {
+    query <- paste0(serverAddress, "api/reglag?mmid=", mmid)
+    regLag <- .sendQueryAndRetrieveResult(query)
+    pred$AgeYr <- pred$AgeYr + regLag$regLagYr
   }
 
+  return (pred)
 }
 
 #' Provide the Status of the Web API.
@@ -223,25 +222,10 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
 #'
 #' @export
 SGStatus <- function() {
-
   query <- paste0(serverAddress, "api/status")
-
-  res <- httr::GET(query)
-  succes <-  res$status_code == 200
-
-  jsonstr <- rawToChar(res$content)
-
-  json <- jsonlite::fromJSON(jsonstr)
-
-  if (succes) {
-    return (json)
-  } else {
-    stop(.getErrorMessage(json))
-  }
-
+  json <- .sendQueryAndRetrieveResult(query)
+  return (json)
 }
-
-
 
 #'
 #' Provide the Final Sample of Parameter Estimates.
@@ -257,16 +241,8 @@ SGStatus <- function() {
 #' @export
 SGGetFinalSample <- function(mmid) {
   query <- paste0(serverAddress, "api/finalsample?mmid=", mmid)
-  res <- httr::GET(query)
-  succes <-  res$status_code == 200
-  jsonstr <- rawToChar(res$content)
-  dataset <- jsonlite::fromJSON(jsonstr)
-
-  if (succes) {
-    return (dataset)
-  } else {
-    stop(.getErrorMessage(dataset))
-  }
+  dataset <- .sendQueryAndRetrieveResult(query)
+  return (dataset)
 }
 
 #'
@@ -278,16 +254,8 @@ SGGetFinalSample <- function(mmid) {
 #' @export
 SGGetMetaData <- function(mmid) {
   query <- paste0(serverAddress, "api/metadata?mmid=", mmid)
-  res <- httr::GET(query)
-  succes <-  res$status_code == 200
-  jsonstr <- rawToChar(res$content)
-  dataset <- jsonlite::fromJSON(jsonstr)
-
-  if (succes) {
-    return (dataset)
-  } else {
-    stop(.getErrorMessage(dataset))
-  }
+  dataset <- .sendQueryAndRetrieveResult(query)
+  return (dataset)
 }
 
 #'
@@ -298,76 +266,23 @@ SGGetMetaData <- function(mmid) {
 #'
 #' @param mmid A string containing the mmid of the MetaModel
 #' @param textsize the font size (20 by default)
-#' @param plotPred a boolean true to enable the plot of predicted values
 #' @param title an optional title for the graph (the mmid by default)
 #' @param ymax the upper bound of the y axis (250 by default)
 #'
 #' @return a ggplot2 graph
 #' @export
-SGGOFGraph <- function(mmid, textsize = 20, plotPred = T, title = mmid, ymax = 250) {
+SGGOFGraph <- function(mmid, textsize = 20, title = mmid, ymax = 250) {
   query <- paste0(serverAddress, "api/fitdata?mmid=", mmid)
-  res <- httr::GET(query)
-  succes <-  res$status_code == 200
-  jsonstr <- rawToChar(res$content)
-  dataset <- jsonlite::fromJSON(jsonstr)
+  dataset <- .sendQueryAndRetrieveResult(query)
 
-  if (!succes) {
-    stop(.getErrorMessage(dataset))
-  }
+  maxX <- max(dataset$timeSinceInitialDateYr + dataset$initialAgeYr)
+  predictions <- SGPredict(mmid, 1, maxX, includeRegLag = F)
 
-  isVarianceAvailable <- "TotalVariance" %in% colnames(dataset)
+  plot <- CFSMetaModelCommons4R::createGOFplot(dataObject = dataset,
+                                                  predictions = predictions,
+                                                  title = title,
+                                                  textsize = textsize)
 
-  if (isVarianceAvailable)
-  {
-    dataset$lower95 <- dataset$Estimate - dataset$TotalVariance^.5 * stats::qnorm(0.975)
-    dataset[which(dataset$lower95 < 0), "lower95"] <- 0
-    dataset$upper95 <- dataset$Estimate + dataset$TotalVariance^.5 * stats::qnorm(0.975)
-  }
-
-  dataset$age <- dataset$initialAgeYr + dataset$timeSinceInitialDateYr
-  dataset$stratum <- paste(dataset$OutputType,dataset$initialAgeYr,sep="_")
-  dataset$predL95 <- dataset$pred - dataset$predVar^.5 * stats::qnorm(0.975)
-  dataset$predU95 <- dataset$pred + dataset$predVar^.5 * stats::qnorm(0.975)
-  dataset[which(dataset$predL95 < 0), "predL95"] <- 0
-
-  datasetPred <- NULL
-  uniqueAge <- c()
-  for (i in 1:length(dataset[,1])) {
-    if (!dataset[i,"age"] %in% uniqueAge) {
-      datasetPred <- rbind(datasetPred, dataset[i,])
-      uniqueAge <- c(uniqueAge, dataset[i,"age"])
-    }
-  }
-  plot <- ggplot2::ggplot()
-  if (isVarianceAvailable)
-  {
-    plot <- plot +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin=lower95, ymax=upper95, x=age, group=stratum), dataset, alpha = .1)
-  }
-
-  plot <- plot +
-    ggplot2::geom_line(ggplot2::aes(y=Estimate, x=age, group=stratum), dataset, lty = "dashed") +
-    ggplot2::xlab("Age (yr)") +
-    ggplot2::ylab(bquote('Volume'~(m^3~ha^{-1}))) +
-    ggplot2::ylim(0,ymax) +
-    ggplot2::xlim(0, 220) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(text = ggplot2::element_text(size=textsize),
-                   axis.text.x = ggplot2::element_text(size=textsize, color = "black"),
-                   axis.text.y = ggplot2::element_text(size=textsize, color = "black"),
-                   axis.line = ggplot2::element_line(color = "black"),
-                   panel.grid.major = ggplot2::element_blank(),
-                   panel.grid.minor = ggplot2::element_blank(),
-                   panel.background = ggplot2::element_blank(),
-                   axis.ticks.length = ggplot2::unit(3,"mm"),
-                   panel.border = ggplot2::element_blank())
-  if (!is.null(title)) {
-    plot <- plot + ggplot2::ggtitle(title)
-  }
-  if (plotPred) {
-    plot <- plot + ggplot2::geom_ribbon(ggplot2::aes(ymin=predL95, ymax=predU95, x=age), datasetPred, alpha = .5) +
-      ggplot2::geom_line(ggplot2::aes(y=pred, x=age), datasetPred, lty = "solid", size = 1.5)
-  }
   return(plot)
 
 }

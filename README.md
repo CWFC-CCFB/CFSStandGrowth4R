@@ -1,3 +1,5 @@
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0) 
+
 # CFSStandGrowth4R
 
 An R client for the CFSStandGrowth Web API
@@ -44,7 +46,7 @@ library("CFSStandGrowth4R")
 fields <- SGGetMetaModelQueryFields()
 print(fields)
 
-query <- SGQuery(SGContains("stratumGroup", "MS2"), SGAnd(), SGContains("outputType", "AllSpecies"))
+query <- SGQuery(SGContains("stratumGroup", "MS22"), SGAnd(), SGContains("outputType", "AllSpecies"))
 listMetaModels <- SGFilterMetaModels(query)
 print(listMetaModels$mmid)
 ~~~
@@ -58,10 +60,10 @@ Each meta-model is attributed an id (mmid) which is a character string containin
 - The response variable
 - The species
 
-For instance, the following mmid "QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecies" contains this information:
+For instance, the following mmid "QC_4OUEST_MS22_NoChange_AliveVolume_AllSpecies" contains this information:
 - The province of Quebec (QC)
-- The area within the province is the forest management unit 02664 (FMU02664)
-- The balsam fir-white birch potential vegetation type (MS2)
+- The area within the province is the bioclimatic subdomain 4OUEST
+- The balsam fir-white birch potential ecological type (MS22)
 - The climate scenario (NO_CHANGE)
 - The response variable is the volume of living trees (AliveVolume)
 - The meta-model was fitted on the all-species volume (AllSpecies)
@@ -72,19 +74,7 @@ function. The SGPredict function provides predictions from particular meta-model
 the folling example:
 
 ~~~R
-SGGOFGraph("QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecies")
-predMS2_FMU02664 <- SGPredict("QC_FMU02664_MS2_NoChange_AliveVolume_AllSpecies", 1, 150, 1)
-
-SGGOFGraph("QC_6OUEST_STR_MS2_6OUEST_NoChange_AliveVolume_AllSpecies")
-predMS2_6Ouest <- SGPredict("QC_6OUEST_STR_MS2_6OUEST_NoChange_AliveVolume_AllSpecies", 1, 150, 1)
+SGGOFGraph("QC_4OUEST_MS22_NoChange_AliveVolume_AllSpecies")
+predMS22 <- SGPredict("QC_4OUEST_MS22_NoChange_AliveVolume_AllSpecies", 1, 150)
 ~~~
 
-Predictions can be easily plotted:
-
-~~~R
-predMS2_FMU02664$zone <- "FMU02664"
-predMS2_6Ouest$zone <- "6Ouest"
-predMS2 <- rbind(predMS2_FMU02664, predMS2_6Ouest)
-require(ggplot2)
-ggplot() + geom_line(aes(x=AgeYr, y=Pred, col=zone), predMS2)
-~~~

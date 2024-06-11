@@ -1,7 +1,7 @@
 Package: CFSStandGrowth4R
 Type: Package
-Title: Connect to the 'CFSStandGrowth' API
-Version: 1.4.0
+Title: Connect to the 'CFSStandGrowth' Web API
+Version: 1.4.1
 Author: Jean-François Lavoie and Mathieu Fortin, Canadian Wood Fibre Centre, Canadian Forest Service
 Maintainer: Mathieu Fortin <mathieu.fortin.re@gmail.com>
 Copyright: His Majesty the King in Right of Canada
@@ -14,10 +14,12 @@ BugReports: https://github.com/CWFC-CCFB/CFSStandGrowth4R/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.0
+Imports: 
+    httr (>= 1.4),
+    jsonlite (>= 1.8),
+    CFSMetaModelCommons4R (>= 1.0.0)
+Remotes:
+    CWFC-CCFB/CFSMetaModelCommons4R
 Suggests: 
     testthat (>= 3.0.0)
-Imports: 
-    ggplot2 (>= 3.3),
-    httr (>= 1.4),
-    jsonlite (>= 1.8)
 Config/testthat/edition: 3
