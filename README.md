@@ -38,7 +38,7 @@ remotes::install_github("CWFC-CCFB/CFSStandGrowth4R")
 
 ## Example of code
 
-The code below provides the list of meta-models for the potential vegetation type "MS2" (balsam fir-white birch) whose response variable is the all-species volume of living trees.
+The code below provides the list of meta-models for the ecological type "MS22" (balsam fir-white birch on mesic sites) whose response variable is the all-species volume of living trees.
 
 ~~~R
 library("CFSStandGrowth4R")
