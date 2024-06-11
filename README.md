@@ -71,7 +71,7 @@ For instance, the following mmid "QC_4OUEST_MS22_NoChange_AliveVolume_AllSpecies
 
 The goodness of fit of a particular meta-model can be visualized using the SGGOFGraph 
 function. The SGPredict function provides predictions from particular meta-models as in
-the folling example:
+the following example:
 
 ~~~R
 SGGOFGraph("QC_4OUEST_MS22_NoChange_AliveVolume_AllSpecies")
