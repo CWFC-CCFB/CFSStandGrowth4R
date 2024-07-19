@@ -10,8 +10,21 @@ library("CFSStandGrowth4R")
 fields <- SGGetMetaModelQueryFields()
 
 test_that("Check query fields", {
-  expect_equal(length(fields), 10)
-  expect_equal(fields[1], "mmid")
+  expect_equal(nrow(fields), 10)
+  expect_equal(fields[1,"field"], "mmid")
+})
+
+query <- SGQuery(SGConstructOrQuery(c("6OUEST", "6EST"), "geoDomain"))
+listMetaModels <- SGFilterMetaModels(query)
+test_that("Check model list", {
+  expect_equal("QC_6OUEST_ME13_NoChange_AliveVolume_AllSpecies" %in% listMetaModels$mmid, TRUE)
+  expect_equal("QC_6EST_MS22_NoChange_AliveVolume_AllSpecies" %in% listMetaModels$mmid, TRUE)
+})
+
+result <- SGGetMetaModelFieldCombinations(c("geoDomain", "growthModel"))
+test_that("Check model list", {
+  expect_equal(nrow(result), 11)
+  expect_equal(ncol(result), 3)
 })
 
 query <- SGQuery(SGContains("geoDomain", "6OUEST"))

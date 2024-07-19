@@ -4,7 +4,7 @@
 \alias{SGGOFGraph}
 \title{Provide a Goodness-of-Fit Graph for a Particular MetaModel.}
 \usage{
-SGGOFGraph(mmid, textsize = 20, title = mmid, ymax = 250)
+SGGOFGraph(mmid, textsize = 20, title = mmid)
 }
 \arguments{
 \item{mmid}{A string containing the mmid of the MetaModel}
@@ -12,8 +12,6 @@ SGGOFGraph(mmid, textsize = 20, title = mmid, ymax = 250)
 \item{textsize}{the font size (20 by default)}
 
 \item{title}{an optional title for the graph (the mmid by default)}
-
-\item{ymax}{the upper bound of the y axis (250 by default)}
 }
 \value{
 a ggplot2 graph

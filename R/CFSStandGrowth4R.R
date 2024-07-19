@@ -35,33 +35,74 @@ serverAddress <- "http://repicea.dynu.net/standgrowth/"
 }
 
 #'
-#' Returns the available fields of the metamodels in the database that can be
-#' used in queries
+#' Return the available fields of the metamodels in the database that can be
+#' used in queries.
 #'
-#' @return a list of field names
+#' The possible values are also returned.
+#'
+#' @return a data.frame object
+#' @param nchar the number of characters to be kept in the 'values' field (100 by default)
 #'
 #' @export
-SGGetMetaModelQueryFields <- function() {
+SGGetMetaModelQueryFields <- function(nchar = 100) {
 
-  res <- httr::GET(paste(serverAddress, "metamodels/1", sep = ""))
+  query <- paste(serverAddress, "metamodels/fields", sep = "")
 
-  jsonstr <- rawToChar(res$content)
+  json <- .sendQueryAndRetrieveResult(query)
 
-  json <- jsonlite::fromJSON(jsonstr)
+  output <- NULL
+  for (name in names(json)) {
+    possibleValues = paste(json[[name]], collapse = ", ")
+    if (nchar(possibleValues) > nchar) {
+      possibleValues <- paste(substr(possibleValues,1,nchar), "...")
+    }
+    output <- rbind(output, data.frame(field = name, values = possibleValues))
+  }
 
-  # remove fields that cannot be used in queries
-  json$'dataSourceYears'= NULL
-  json$'nbPlots'= NULL
-  json$'_links' = NULL
-
-  return (names(json))
+  return (output)
 }
+
+
+#'
+#' Return the field combinations and the count of each combination.
+#'
+#' @return a data.frame object
+#' @param fields a vector of field names
+#'
+#' @export
+SGGetMetaModelFieldCombinations <- function(fields) {
+  query <- paste(serverAddress, "metamodels/fieldCombinations?fields=", paste(fields, collapse=","), sep = "")
+  json <- .sendQueryAndRetrieveResult(query)
+  return(json)
+}
+
 
 #' Returns the AND predicate for use in query construction
 #' @export
 SGAnd <- function() {
   return (",")
 }
+
+#'
+#' Produce a Query with all the values separated by OR operators.
+#'
+#' @return a character string that can be used with the SGQuery function
+#' @param vValues a vector of values
+#' @param fieldName the name of the field
+#'
+SGConstructOrQuery <- function(vValues, fieldName) {
+  output <- c()
+  for (v in vValues) {
+    if (length(output) > 0) {
+      output <- c(output, SGOr(), SGContains(fieldName, v))
+    } else {
+      output <- SGContains(fieldName, v)
+    }
+  }
+  return(paste(output, collapse=""))
+}
+
+
 
 #' Returns the OR predicate for use in query construction
 #' @export
@@ -267,11 +308,10 @@ SGGetMetaData <- function(mmid) {
 #' @param mmid A string containing the mmid of the MetaModel
 #' @param textsize the font size (20 by default)
 #' @param title an optional title for the graph (the mmid by default)
-#' @param ymax the upper bound of the y axis (250 by default)
 #'
 #' @return a ggplot2 graph
 #' @export
-SGGOFGraph <- function(mmid, textsize = 20, title = mmid, ymax = 250) {
+SGGOFGraph <- function(mmid, textsize = 20, title = mmid) {
   query <- paste0(serverAddress, "api/fitdata?mmid=", mmid)
   dataset <- .sendQueryAndRetrieveResult(query)
 

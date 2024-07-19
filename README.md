@@ -33,7 +33,7 @@ The package can be installed using the remotes package:
 
 ~~~R
 library(remotes)
-remotes::install_github("CWFC-CCFB/CFSStandGrowth4R")
+install_github("CWFC-CCFB/CFSStandGrowth4R")
 ~~~
 
 ## Example of code
@@ -47,9 +47,19 @@ fields <- SGGetMetaModelQueryFields()
 print(fields)
 
 query <- SGQuery(SGContains("stratumGroup", "MS22"), SGAnd(), SGContains("outputType", "AllSpecies"))
+
 listMetaModels <- SGFilterMetaModels(query)
 print(listMetaModels$mmid)
 ~~~
+
+Combinations of attributes can be extracted through the SGGetMetaModelFieldCombinations function:
+
+~~~R
+result <- SGGetMetaModelFieldCombinations(c("geoDomain", "growthModel"))
+~~~
+
+The result data.frame instance contains three columns, the first two containing the combinations of geoDomain and growthModel values. The last column provides the count of meta models for each combination. 
+It is possible to include more fields in the vector argument of the function.
 
 Each meta-model is attributed an id (mmid) which is a character string containing the following information:
 

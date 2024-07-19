@@ -1,7 +1,7 @@
 Package: CFSStandGrowth4R
 Type: Package
 Title: Connect to the 'CFSStandGrowth' Web API
-Version: 1.4.1
+Version: 1.5.0
 Author: Jean-François Lavoie and Mathieu Fortin, Canadian Wood Fibre Centre, Canadian Forest Service
 Maintainer: Mathieu Fortin <mathieu.fortin.re@gmail.com>
 Copyright: His Majesty the King in Right of Canada
@@ -13,7 +13,7 @@ License: LGPL-3 + file LICENSE
 BugReports: https://github.com/CWFC-CCFB/CFSStandGrowth4R/issues
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 Imports: 
     httr (>= 1.4),
     jsonlite (>= 1.8),

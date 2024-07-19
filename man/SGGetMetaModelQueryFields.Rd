@@ -2,15 +2,17 @@
 % Please edit documentation in R/CFSStandGrowth4R.R
 \name{SGGetMetaModelQueryFields}
 \alias{SGGetMetaModelQueryFields}
-\title{Returns the available fields of the metamodels in the database that can be
-used in queries}
+\title{Return the available fields of the metamodels in the database that can be
+used in queries.}
 \usage{
-SGGetMetaModelQueryFields()
+SGGetMetaModelQueryFields(nchar = 100)
+}
+\arguments{
+\item{nchar}{the number of characters to be kept in the 'values' field (100 by default)}
 }
 \value{
-a list of field names
+a data.frame object
 }
 \description{
-Returns the available fields of the metamodels in the database that can be
-used in queries
+The possible values are also returned.
 }
