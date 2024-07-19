@@ -58,7 +58,8 @@ Combinations of attributes can be extracted through the SGGetMetaModelFieldCombi
 result <- SGGetMetaModelFieldCombinations(c("geoDomain", "growthModel"))
 ~~~
 
-The result data.frame instance contains three columns, the first two containing the combinations of geoDomain and growthModel values. The last column provides the count of meta models for each combination. 
+The result data.frame instance contains three columns, the first two containing the combinations of geoDomain 
+and growthModel values. The last column provides the count of meta models for each combination. 
 It is possible to include more fields in the vector argument of the function.
 
 Each meta-model is attributed an id (mmid) which is a character string containing the following information:
