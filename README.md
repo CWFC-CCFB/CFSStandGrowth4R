@@ -12,7 +12,7 @@ The CFSStandGrowth4R package makes it possible to
 
 ## License
 
-The CFSStandGrowth4R package is licensed under the GNU Lesser General Public License 2.1.
+The CFSStandGrowth4R package is licensed under the GNU Lesser General Public License 3 (LGPL-3).
 
 ## Developers
 
@@ -38,7 +38,7 @@ install_github("CWFC-CCFB/CFSStandGrowth4R")
 
 ## Example of code
 
-The code below provides the list of meta-models for the potential vegetation type "MS2" (balsam fir-white birch) whose response variable is the all-species volume of living trees.
+The code below provides the list of meta-models for the ecological type "MS22" (balsam fir-white birch on mesic sites) whose response variable is the all-species volume of living trees.
 
 ~~~R
 library("CFSStandGrowth4R")
@@ -81,7 +81,7 @@ For instance, the following mmid "QC_4OUEST_MS22_NoChange_AliveVolume_AllSpecies
 
 The goodness of fit of a particular meta-model can be visualized using the SGGOFGraph 
 function. The SGPredict function provides predictions from particular meta-models as in
-the folling example:
+the following example:
 
 ~~~R
 SGGOFGraph("QC_4OUEST_MS22_NoChange_AliveVolume_AllSpecies")
