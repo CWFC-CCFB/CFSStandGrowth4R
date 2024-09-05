@@ -39,9 +39,9 @@ test_that("Check meta data", {
   expect_equal(length(metaData), 13)
 })
 
-prediction <- SGPredict(listMetaModels$mmid[1], 1, 150, 1)
+prediction <- SGPredict(listMetaModels$mmid[1], 0, 150, 1)
 test_that("Check predictions", {
-  expect_equal(nrow(prediction), 150)
+  expect_equal(nrow(prediction), 151)
   expect_equal(ncol(prediction), 3)
 })
 
@@ -50,4 +50,21 @@ test_that("Check MC predictions", {
   expect_equal(nrow(predictionMC), 2 * 4 * 150)
   expect_equal(ncol(predictionMC), 4)
 })
+
+isThereAnyLag <- SGGetRegenerationLagIfAny(listMetaModels$mmid[1])
+test_that("Check regeneration lag", {
+  expect_true(is.numeric(isThereAnyLag))
+})
+
+prediction <- SGPredict("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies", 0, 150, 10)
+isThereAnyLag <- SGGetRegenerationLagIfAny("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies")
+test_that("Check predictions", {
+  expect_equal(nrow(prediction), 16)
+  expect_equal(ncol(prediction), 3)
+  expect_true(prediction[2,"Pred"] < 0.4)
+})
+
+
+
+
 

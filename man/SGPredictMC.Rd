@@ -4,15 +4,7 @@
 \alias{SGPredictMC}
 \title{Gets Predictions using Monte-Carlo Simulated Parameters.}
 \usage{
-SGPredictMC(
-  mmid,
-  ageyrmin,
-  ageyrmax,
-  step = NULL,
-  nbsub = 1,
-  nbreal = 1,
-  includeRegLag = T
-)
+SGPredictMC(mmid, ageyrmin, ageyrmax, step = NULL, nbsub = 1, nbreal = 1)
 }
 \arguments{
 \item{mmid}{A string containing the mmid of the MetaModel}
@@ -28,8 +20,6 @@ variability due to the random effect.}
 
 \item{nbreal}{The number of realizations to simulate parameters for in range (0,1000). Zero disables
 the variability due to the parameter estimates.}
-
-\item{includeRegLag}{a logical; TRUE to include the regeneration lag or false otherwise (default is TRUE)}
 }
 \value{
 a data.frame object with four columns (RealizationID, SubjectID, AgeYr, Pred).

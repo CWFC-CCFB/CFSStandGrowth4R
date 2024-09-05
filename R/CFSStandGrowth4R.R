@@ -90,6 +90,7 @@ SGAnd <- function() {
 #' @param vValues a vector of values
 #' @param fieldName the name of the field
 #'
+#' @export
 SGConstructOrQuery <- function(vValues, fieldName) {
   output <- c()
   for (v in vValues) {
@@ -185,7 +186,9 @@ SGFilterMetaModels <- function(query = NULL) {
   return(json)
 }
 
+#'
 #' Gets a set of predictions from the specified metamodel
+#'
 #' @param mmid A string containing the mmid of the MetaModel#'
 #' @param ageyrmin The minimum age year to get the prediction set for
 #' @param ageyrmax The maximum age year to get the prediction set for (ageyrmax will be included in output values)
@@ -194,11 +197,10 @@ SGFilterMetaModels <- function(query = NULL) {
 #'           NONE : no variance output
 #'           PARAMEST (default) : variance output for parameter estimation
 #'           PARAMESTRE : variance output for parameter estimation including random effect
-#' @param includeRegLag a logical; TRUE to include the regeneration lag or false otherwise (default is TRUE)
 #' @return a data.frame object with two columns. "age" is the age of the stand (yr) and "v" is the prediction (e.g. m3/ha)
 #' @seealso SGPredictMC
 #' @export
-SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout="PARAMEST", includeRegLag = T) {
+SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout="PARAMEST") {
   query <- paste0(serverAddress, "api/predict?mmid=", mmid, "&ageyrmin=", ageyrmin, "&ageyrmax=", ageyrmax)
   if (!is.null(step)) {
     query <- paste(query, "&step=", step, sep = "")
@@ -207,13 +209,20 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout="PARAMEST", in
     query <- paste(query, "&varout=", varout, sep = "")
   }
   pred <- .sendQueryAndRetrieveResult(query)
-
-  if (includeRegLag) {
-    query <- paste0(serverAddress, "api/reglag?mmid=", mmid)
-    regLag <- .sendQueryAndRetrieveResult(query)
-    pred$AgeYr <- pred$AgeYr + regLag$regLagYr
-  }
   return (pred)
+}
+
+#'
+#' Provide the regeneration lag if any.
+#'
+#' @param mmid A string containing the mmid of the MetaModel#'
+#' @return a numeric
+#'
+#' @export
+SGGetRegenerationLagIfAny <- function(mmid) {
+  query <- paste0(serverAddress, "api/reglag?mmid=", mmid)
+  regLag <- .sendQueryAndRetrieveResult(query)
+  return(regLag[[1]])
 }
 
 .getErrorMessage <- function(jsonList) {
@@ -237,22 +246,21 @@ SGPredict <- function(mmid, ageyrmin, ageyrmax, step=NULL, varout="PARAMEST", in
 #' variability due to the random effect.
 #' @param nbreal The number of realizations to simulate parameters for in range (0,1000). Zero disables
 #' the variability due to the parameter estimates.
-#' @param includeRegLag a logical; TRUE to include the regeneration lag or false otherwise (default is TRUE)
 #' @return a data.frame object with four columns (RealizationID, SubjectID, AgeYr, Pred).
 #' @seealso SGPredict
 #' @export
-SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1, includeRegLag = T) {
+SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) {
   query <- paste(serverAddress, "api/predictmc?mmid=", mmid, "&ageyrmin=", ageyrmin, "&ageyrmax=", ageyrmax, "&nbsub=", nbsub, "&nbreal=", nbreal, sep = "")
   if (!is.null(step)) {
     query <- paste(query, "&step=", step, sep = "")
   }
   pred <- .sendQueryAndRetrieveResult(query)
 
-  if (includeRegLag) {
-    query <- paste0(serverAddress, "api/reglag?mmid=", mmid)
-    regLag <- .sendQueryAndRetrieveResult(query)
-    pred$AgeYr <- pred$AgeYr + regLag$regLagYr
-  }
+  # if (includeRegLag) {
+  #   query <- paste0(serverAddress, "api/reglag?mmid=", mmid)
+  #   regLag <- .sendQueryAndRetrieveResult(query)
+  #   pred$AgeYr <- pred$AgeYr + regLag$regLagYr
+  # }
 
   return (pred)
 }
@@ -316,7 +324,7 @@ SGGOFGraph <- function(mmid, textsize = 20, title = mmid) {
   dataset <- .sendQueryAndRetrieveResult(query)
 
   maxX <- max(dataset$timeSinceInitialDateYr + dataset$initialAgeYr)
-  predictions <- SGPredict(mmid, 1, maxX, includeRegLag = F)
+  predictions <- SGPredict(mmid, 1, maxX)
 
   plot <- CFSMetaModelCommons4R::createGOFplot(dataObject = dataset,
                                                   predictions = predictions,
