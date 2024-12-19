@@ -8,9 +8,9 @@ An R client for the CFSStandGrowth Web API.
 ## Introduction
 
 The CFSStandGrowth4R package gives access to the CFSStandGrowth Web API, which
-is a repository of meta-models. Meta-models are simpler models fitted on the
-predictions of more complex tree- or stand-level models. Being fitted to inventory data,
-these meta-models apply at the landscape level. The method for fitting these meta-models
+is a repository of meta-models. Meta-models are simpler models fitted to the
+predictions of more complex tree- or stand-level models. These meta-models apply 
+at the landscape level. The method for fitting these meta-models
 is described in [Fortin et al. (2022)](https://doi.org/10.1139/cjfr-2022-0002).
 
 More precisely, the CFSStandGrowth4R package makes it possible to 
