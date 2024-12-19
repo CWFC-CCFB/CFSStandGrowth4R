@@ -34,7 +34,7 @@ Mathieu Fortin (mathieu.fortin@nrcan-rncan.gc.ca)
 
 Please report any bug at https://github.com/CWFC-CCFB/CFSStandGrowth4R/issues.
 
-## Documentations
+## Documentation
 
 Please see the wiki of the package at https://github.com/CWFC-CCFB/CFSStandGrowth4R/wiki. 
 
