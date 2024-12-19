@@ -1,8 +1,9 @@
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0) 
+[![R-CMD-check](https://github.com/CWFC-CCFB/CFSStandGrowth4R/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CWFC-CCFB/CFSStandGrowth4R/actions/workflows/R-CMD-check.yaml)
 
 # CFSStandGrowth4R
 
-An R client for the CFSStandGrowth Web API
+An R client for the CFSStandGrowth Web API.
 
 ## Introduction
 
