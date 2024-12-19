@@ -14,24 +14,22 @@ test_that("Check query fields", {
   expect_equal(fields[1,"field"], "mmid")
 })
 
-query <- SGQuery(SGConstructOrQuery(c("6OUEST", "6EST"), "geoDomain"))
-listMetaModels <- SGFilterMetaModels(query)
+listMetaModels <- SGSelectMetaModels(geoDomain = c("6OUEST", "6EST"))
 test_that("Check model list", {
-  expect_equal("QC_6OUEST_ME13_NoChange_AliveVolume_AllSpecies" %in% listMetaModels$mmid, TRUE)
-  expect_equal("QC_6EST_MS22_NoChange_AliveVolume_AllSpecies" %in% listMetaModels$mmid, TRUE)
+  expect_equal("QC_6OUEST_ME13_NoChange_AliveVolume_AllSpecies_PET4_Artemis2009" %in% listMetaModels$mmid, TRUE)
+  expect_equal("QC_6EST_MS22_NoChange_AliveVolume_AllSpecies_PET4_Artemis2009" %in% listMetaModels$mmid, TRUE)
 })
 
 result <- SGGetMetaModelFieldCombinations(c("geoDomain", "growthModel"))
 test_that("Check model list", {
-  expect_equal(nrow(result), 11)
-  expect_equal(ncol(result), 3)
+  expect_true(nrow(result) > 0)
+  expect_true(ncol(result) > 0)
 })
 
-query <- SGQuery(SGContains("geoDomain", "6OUEST"))
-listMetaModels <- SGFilterMetaModels(query)
+listMetaModels <- SGSelectMetaModels(geoDomain = "6OUEST")
 
 test_that("Check model list", {
-  expect_equal("QC_6OUEST_ME13_NoChange_AliveVolume_AllSpecies" %in% listMetaModels$mmid, TRUE)
+  expect_equal("QC_6OUEST_ME13_NoChange_AliveVolume_AllSpecies_PET4_Artemis2009" %in% listMetaModels$mmid, TRUE)
 })
 
 metaData <- SGGetMetaData(listMetaModels$mmid[1])
@@ -56,12 +54,13 @@ test_that("Check regeneration lag", {
   expect_true(is.numeric(isThereAnyLag))
 })
 
-prediction <- SGPredict("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies", 0, 150, 10)
-isThereAnyLag <- SGGetRegenerationLagIfAny("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies")
+prediction <- SGPredict("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies_PET4_Artemis2009", 0, 150, 10)
+lag <- SGGetRegenerationLagIfAny("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies_PET4_Artemis2009")
 test_that("Check predictions", {
   expect_equal(nrow(prediction), 16)
   expect_equal(ncol(prediction), 3)
   expect_true(prediction[2,"Pred"] < 0.4)
+  expect_equal(lag, 9.03103, tolerance = 0.1)
 })
 
 

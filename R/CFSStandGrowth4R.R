@@ -62,12 +62,104 @@ SGGetMetaModelQueryFields <- function(nchar = 100) {
   return (output)
 }
 
+#'
+#' Provide a Selection of Meta-Models
+#'
+#' Each field is queried using OR as logical operator between the
+#' different values. The queries are then linked using an AND operator.
+#'
+#' For instance, if the geoDomain argument is the vector c("6OUEST", "6EST")
+#' and the dataSource argument is the vector c("PET3", "PET4"), then all the
+#' meta models fitted in either geoDomain 6OUEST or 6EST and fitted to either
+#' dataSource PET3 or PET4 are selected.
+#'
+#' @param geoDomain the geographic domain of the meta-model (e.g. the
+#' bioclimatic subdomain in Quebec)
+#' @param dataSource the source of data used to fit the meta-model (e.g. PET4
+#' which is the fourth campaign of the provincial inventory in Quebec)
+#' @param climateChangeOption the climate change scenario
+#' @param growthModel the complex growth model used to run the simulation
+#' (e.g. artemis2009)
+#' @param outputType the response variable (e.g. AliveVolume_AllSpecies)
+#' @param fitModel the formulation of the meta-model (e.g. ChapmanRichards)
+#' @param stratumGroup the name of the stratum group that is represented
+#' by the meta-model
+#'
+#' @return a data.frame object
+#'
+#' @seealso the SGGetMetaModelQueryFields function for the values of the different
+#' fields
+#'
+#' @examples
+#' myMetaModels <- SGSelectMetaModels(geoDomain = c("6OUEST", "6EST"), dataSource = c("PET3", "PET4"))
+#'
+#' @export
+SGSelectMetaModels <- function(geoDomain = NULL,
+                               dataSource = NULL,
+                               climateChangeOption = NULL,
+                               growthModel = NULL,
+                               outputType = NULL,
+                               fitModel = NULL,
+                               stratumGroup = NULL) {
+
+  valueList <- list()
+  if (!is.null(geoDomain)) {
+    valueList[["geoDomain"]] <- geoDomain
+  }
+  if (!is.null(dataSource)) {
+    valueList[["dataSource"]] <- dataSource
+  }
+  if (!is.null(climateChangeOption)) {
+    valueList[["climateChangeOption"]] <- climateChangeOption
+  }
+  if (!is.null(growthModel)){
+    valueList[["growthModel"]] <- growthModel
+  }
+  if (!is.null(outputType)) {
+    valueList[["outputType"]] <- outputType
+  }
+  if (!is.null(fitModel)) {
+    valueList[["fitModel"]] <- fitModel
+  }
+  if (!is.null(stratumGroup)) {
+    valueList[["stratumGroup"]] <- stratumGroup
+  }
+
+  if (length(valueList) == 0) {
+    stop("At least one argument of the function must be non null!")
+  }
+
+  selectedMetaModels <- NULL
+  for (name in names(valueList)) {
+    myValues <- valueList[[name]]
+    query <- .SGConstructOrQuery(myValues, name)
+    metaModels <- .SGFilterMetaModels(query)
+    if (is.null(selectedMetaModels)) {
+      selectedMetaModels <- metaModels
+    } else {
+      common <- intersect(selectedMetaModels$mmid, metaModels$mmid)
+      selectedMetaModels <- selectedMetaModels[which(selectedMetaModels$mmid %in% common),]
+    }
+  }
+  return(selectedMetaModels)
+}
+
+
+
+
 
 #'
 #' Return the field combinations and the count of each combination.
 #'
 #' @return a data.frame object
 #' @param fields a vector of field names
+#'
+#' @examples
+#' SGGetMetaModelFieldCombinations(c("geoDomain", "dataSource"))
+#'
+#'
+#' @seealso [SGGetMetaModelQueryFields()] for the values of the different
+#' fields
 #'
 #' @export
 SGGetMetaModelFieldCombinations <- function(fields) {
@@ -76,48 +168,94 @@ SGGetMetaModelFieldCombinations <- function(fields) {
   return(json)
 }
 
-
-#' Returns the AND predicate for use in query construction
-#' @export
-SGAnd <- function() {
-  return (",")
+.SGAnd <- function() {
+  return(",")
 }
 
 #'
-#' Produce a Query with all the values separated by OR operators.
+#' Return the AND predicate for use in query construction
 #'
-#' @return a character string that can be used with the SGQuery function
-#' @param vValues a vector of values
-#' @param fieldName the name of the field
+#' THIS FUNCTION IS DEPRECATED. PLEASE USE THE SGSelectMetaModels FUNCTION
+#' INSTEAD.
+#'
+#' @name SGAnd-deprecated
 #'
 #' @export
-SGConstructOrQuery <- function(vValues, fieldName) {
+SGAnd <- function() {
+  .Deprecated("SGSelectMetaModels")
+  return (.SGAnd())
+}
+
+.SGConstructOrQuery <- function(vValues, fieldName) {
   output <- c()
   for (v in vValues) {
     if (length(output) > 0) {
-      output <- c(output, SGOr(), SGContains(fieldName, v))
+      output <- c(output, .SGOr(), .SGContains(fieldName, v))
     } else {
-      output <- SGContains(fieldName, v)
+      output <- .SGContains(fieldName, v)
     }
   }
   return(paste(output, collapse=""))
 }
 
-
-
-#' Returns the OR predicate for use in query construction
+#'
+#' Produce a Query with all the values separated by OR operators.
+#'
+#' THIS FUNCTION IS DEPRECATED. PLEASE USE THE SGSelectMetaModels FUNCTION
+#' INSTEAD.
+#'
+#' @return a character string that can be used with the SGQuery function
+#' @param vValues a vector of values
+#' @param fieldName the name of the field
+#'
+#'
+#' @name SGConstructOrQuery-deprecated
+#'
 #' @export
-SGOr <- function() {
-  return ("'")
+SGConstructOrQuery <- function(vValues, fieldName) {
+  .Deprecated("SGSelectMetaModels")
+  return(.SGConstructOrQuery(vValues, fieldName))
 }
 
+
+.SGOr <- function() {
+  return("'")
+}
+
+#' Returns the OR predicate for use in query construction
+#'
+#' THIS FUNCTION IS DEPRECATED. PLEASE USE THE SGSelectMetaModels FUNCTION
+#' INSTEAD.
+#'
+#' @name SGOr-deprecated
+#'
+#' @export
+SGOr <- function() {
+  .Deprecated("SGSelectMetaModels")
+  return (.SGOr())
+}
+
+.SGContains <- function(field, value) {
+  return (paste(field, ":", value, sep=""))
+}
+
+
 #' Returns the Contains term for use in query construction
+#'
 #' This corresponds to the LIKE SQL operator which is case sensitive.
+#' #'
 #' @param field one of the fields listed by the SGGetMetaModelQueryFields function
 #' @param value the value for this field
+#'
+#' THIS FUNCTION IS DEPRECATED. PLEASE USE THE SGSelectMetaModels FUNCTION
+#' INSTEAD.
+#'
+#' @name SGContains-deprecated
+#'
 #' @export
 SGContains <- function(field, value) {
-  return (paste(field, ":", value, sep=""))
+  .Deprecated("SGSelectMetaModels")
+  return (.SGContains(field, value))
 }
 
 #' Returns the LowerThan term for use in query construction
@@ -140,10 +278,32 @@ SGGreaterThan <- function(field, value) {
 #' A query is a series of one or more terms separated by predicates.
 #' Example : mmid contains "foo" AND outputType contains "All" OR nbRealizations > 1000
 #' @param ... the multiple operators of the query
+#'
+#' THIS FUNCTION IS DEPRECATED. PLEASE USE THE SGSelectMetaModels FUNCTION
+#' INSTEAD.
+#'
+#' @name SGQuery-deprecated
+#'
 #' @export
 SGQuery <- function(...) {
+  .Deprecated("SGSelectMetaModels")
   return (paste(..., sep = ""))
 }
+
+.SGFilterMetaModels <- function(query = NULL) {
+  if (is.null(query)) {
+    res <- httr::GET(paste(serverAddress, "metamodels", sep = ""))
+    jsonstr <- rawToChar(res$content)
+    json <- jsonlite::fromJSON(jsonstr)
+    return (json$'_embedded'$'metamodels')
+  } else {
+    res <- httr::GET(paste(serverAddress, "metamodels/filter?query=", query, sep = ""))
+    jsonstr <- rawToChar(res$content)
+    json <- jsonlite::fromJSON(jsonstr)
+    return (json)
+  }
+}
+
 
 #' Searches the metamodel database for matches to the specified query
 #'
@@ -160,19 +320,11 @@ SGQuery <- function(...) {
 #'
 #' @return a dataframe containing all metamodels matching the query
 #' @seealso SGQuery, SGContains, SGGreaterThan, SGLowerThan, SGAnd, SGOr
+#'
 #' @export
 SGFilterMetaModels <- function(query = NULL) {
-  if (is.null(query)) {
-	  res <- httr::GET(paste(serverAddress, "metamodels", sep = ""))
-	  jsonstr <- rawToChar(res$content)
-	  json <- jsonlite::fromJSON(jsonstr)
-	  return (json$'_embedded'$'metamodels')
-  } else {
-    res <- httr::GET(paste(serverAddress, "metamodels/filter?query=", query, sep = ""))
-    jsonstr <- rawToChar(res$content)
-    json <- jsonlite::fromJSON(jsonstr)
-    return (json)
-  }
+  .Deprecated("SGSelectMetaModels")
+  .SGFilterMetaModels(query)
 }
 
 .sendQueryAndRetrieveResult <- function(query) {
@@ -276,23 +428,6 @@ SGStatus <- function() {
   return (json)
 }
 
-#'
-#' Provide the Final Sample of Parameter Estimates.
-#'
-#' The final sample is the one provided by a selection
-#' rate of the Markov chain, This function does not rely
-#' on a cache on the server end. The full meta-model must
-#' be deserialized and this may take a few seconds.
-#'
-#' @param mmid A string containing the mmid of the MetaModel
-#'
-#' @return a data.frame object
-#' @export
-SGGetFinalSample <- function(mmid) {
-  query <- paste0(serverAddress, "api/finalsample?mmid=", mmid)
-  dataset <- .sendQueryAndRetrieveResult(query)
-  return (dataset)
-}
 
 #'
 #' Provide the Meta-Data of a particular Meta-Model.

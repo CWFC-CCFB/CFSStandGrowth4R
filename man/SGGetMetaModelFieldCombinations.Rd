@@ -15,3 +15,12 @@ a data.frame object
 \description{
 Return the field combinations and the count of each combination.
 }
+\examples{
+SGGetMetaModelFieldCombinations(c("geoDomain", "dataSource"))
+
+
+}
+\seealso{
+[SGGetMetaModelQueryFields()] for the values of the different
+fields
+}
