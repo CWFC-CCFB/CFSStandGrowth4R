@@ -327,15 +327,19 @@ SGFilterMetaModels <- function(query = NULL) {
   .SGFilterMetaModels(query)
 }
 
-.sendQueryAndRetrieveResult <- function(query) {
+.sendQueryAndRetrieveResult <- function(query, toJSON = TRUE) {
   res <- httr::GET(query)
   succes <-  res$status_code == 200
   jsonstr <- rawToChar(res$content)
-  json <- jsonlite::fromJSON(jsonstr)
-  if (!succes) {
-    stop(.getErrorMessage(json))
+  if (toJSON) {
+    json <- jsonlite::fromJSON(jsonstr)
+    if (!succes) {
+      stop(.getErrorMessage(json))
+    }
+    return(json)
+  } else {
+    return(jsonstr)
   }
-  return(json)
 }
 
 #'
@@ -441,6 +445,22 @@ SGGetMetaData <- function(mmid) {
   dataset <- .sendQueryAndRetrieveResult(query)
   return (dataset)
 }
+
+#'
+#' Provide the summary of a particular Meta-Model.
+#'
+#' @param mmid A string containing the parameter estimates and
+#' other information.
+#'
+#' @return a list object
+#' @export
+SGGetSummary <- function(mmid) {
+  query <- paste0(serverAddress, "api/summary?mmid=", mmid)
+  summary <- .sendQueryAndRetrieveResult(query, toJSON = F)
+  cat(summary)
+  return (invisible(NULL))
+}
+
 
 #'
 #' Provide a Goodness-of-Fit Graph for a Particular MetaModel.

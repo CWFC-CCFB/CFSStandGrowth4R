@@ -7,6 +7,8 @@
 
 library("CFSStandGrowth4R")
 
+SGStatus()
+
 fields <- SGGetMetaModelQueryFields()
 
 test_that("Check query fields", {
@@ -64,6 +66,7 @@ test_that("Check predictions", {
 })
 
 
+SGGetSummary("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies_PET4_Artemis2009")
 
 
 
