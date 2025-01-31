@@ -136,10 +136,13 @@ SGSelectMetaModels <- function(geoDomain = NULL,
     metaModels <- .SGFilterMetaModels(query)
     if (is.null(selectedMetaModels)) {
       selectedMetaModels <- metaModels
-    } else {
-      common <- intersect(selectedMetaModels$mmid, metaModels$mmid)
-      selectedMetaModels <- selectedMetaModels[which(selectedMetaModels$mmid %in% common),]
     }
+    common <- intersect(selectedMetaModels$mmid, metaModels$mmid)
+    if(is.null(common)) {
+      print("No matches found.")
+      return(list())
+    }
+    selectedMetaModels <- selectedMetaModels[which(selectedMetaModels$mmid %in% common),]
   }
   return(selectedMetaModels)
 }
