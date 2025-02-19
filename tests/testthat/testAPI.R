@@ -79,4 +79,16 @@ test_that("Check nb of best fit models", {
   expect_equal(nrow(bestMetaModels), 2)
 })
 
+bestMetaModels <- SGFindBest("QC", "6EST", "Volume", "FE22")
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 1)
+  expect_equal(bestMetaModels$bestFit_geoDomain, "NA")
+})
+
+
+bestMetaModels <- SGFindBest(rep("QC",3), c("4EST","4OUEST","6OUEST"), rep("Volume_Coniferous",3), rep("FE22",3))
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 3)
+})
+
 

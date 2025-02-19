@@ -511,6 +511,7 @@ SGGOFGraph <- function(mmid, textsize = 20, title = mmid) {
 }
 
 
+
 #'
 #' Find the Metamodel(s) that Best Fit a Particular Context.
 #'
@@ -547,7 +548,12 @@ SGFindBest <- function(geoRegion, geoDomain, outputType, ecoType, leadingSpecies
       query <- paste0(query, "&leadingspecies=", leadingSpecies[i])
     }
     dataset <- .sendQueryAndRetrieveResult(query)
-    dataset <- dataset[,colnames(dataset)[which(!colnames(dataset) %in% c("dataSourceYears", "nbPlots"))]]
+    colToKeep <- c("mmid", "geoRegion", "geoDomain", "dataSource", "climateChangeOption", "growthModel", "outputType", "stratumGroup", "leadingSpecies")
+    if (length(dataset) == 0) { # there is no match, then we create an empty dataset
+      dataset <- data.frame(mmid = "NA", geoRegion = "NA", geoDomain = "NA", dataSource = "NA", climateChangeOption = "NA",
+                            growthModel = "NA", outputType = "NA", stratumGroup = "NA", leadingSpecies = "NA")
+    }
+    dataset <- dataset[,colnames(dataset)[which(colnames(dataset) %in% colToKeep)]]
     newColnames <- paste0("bestFit_", colnames(dataset))
     colnames(dataset) <- newColnames
     dataset$queryId <- i
