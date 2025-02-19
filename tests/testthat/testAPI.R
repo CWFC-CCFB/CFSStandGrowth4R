@@ -12,7 +12,7 @@ SGStatus()
 fields <- SGGetMetaModelQueryFields()
 
 test_that("Check query fields", {
-  expect_equal(nrow(fields), 10)
+  expect_equal(nrow(fields), 13)
   expect_equal(fields[1,"field"], "mmid")
 })
 
@@ -36,7 +36,7 @@ test_that("Check model list", {
 
 metaData <- SGGetMetaData(listMetaModels$mmid[1])
 test_that("Check meta data", {
-  expect_equal(length(metaData), 13)
+  expect_equal(length(metaData), 15)
 })
 
 prediction <- SGPredict(listMetaModels$mmid[1], 0, 150, 1)
@@ -68,5 +68,15 @@ test_that("Check predictions", {
 
 SGGetSummary("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies_PET4_Artemis2009")
 
+bestMetaModels <- SGFindBest("QC", "4EST", "Volume", "FE22")
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 3)
+})
+
+
+bestMetaModels <- SGFindBest(rep("QC",2), c("4EST","4OUEST"), rep("Volume_Coniferous",2), rep("FE22",2))
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 2)
+})
 
 
