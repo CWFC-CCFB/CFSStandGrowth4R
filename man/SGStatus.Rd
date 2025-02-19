@@ -7,7 +7,7 @@
 SGStatus()
 }
 \value{
-a data.frame object with four columns (RealizationID, SubjectID, AgeYr, Pred).
+a list containing information on the Web API (e.g. version).
 }
 \description{
 Provide the Status of the Web API.

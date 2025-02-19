@@ -443,11 +443,11 @@ SGPredictMC <- function(mmid, ageyrmin, ageyrmax, step=NULL, nbsub=1, nbreal=1) 
 
 #' Provide the Status of the Web API.
 #'
-#' @return a data.frame object with four columns (RealizationID, SubjectID, AgeYr, Pred).
+#' @return a list containing information on the Web API (e.g. version).
 #'
 #' @export
 SGStatus <- function() {
-  query <- paste0(serverAddress, "api/status")
+  query <- paste0(serverAddress, "api/status?clientversion=", as.character(utils::packageVersion("CFSStandGrowth4R")))
   json <- .sendQueryAndRetrieveResult(query)
   return (json)
 }
