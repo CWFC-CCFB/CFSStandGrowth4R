@@ -21,6 +21,9 @@
 
 serverAddress <- "http://repicea.dynu.net/standgrowth/"
 #serverAddress <- "http://localhost:50101/"
+VersionWarningStr <- "VersionWarning"
+MessageToClientStr <- "MessageToClient"
+
 
 .welcomeMessage <- function() {
   packageStartupMessage("Welcome to CFSStandGrowth4R !")
@@ -28,6 +31,20 @@ serverAddress <- "http://repicea.dynu.net/standgrowth/"
 
 .onAttach <- function(libname, pkgname) {
   .welcomeMessage()
+  tryCatch(
+    {
+      status <- SGStatus()
+      if (VersionWarningStr %in% names(status)) {
+        warning(status[[VersionWarningStr]])
+      }
+      if (MessageToClientStr %in% names(status)) {
+        packageStartupMessage(status[[MessageToClientStr]])
+      }
+    },
+    error = function(cond) {
+      warning("R is unable to connect to CFSStandGrowth Web API! \n It may be that your internet connection is not working or your firewall does not allow for http requests.")
+    }
+  )
 }
 
 .onDetach <- function(libname) {
@@ -493,6 +510,60 @@ SGGOFGraph <- function(mmid, textsize = 20, title = mmid) {
 
 }
 
+
+#'
+#' Find the Metamodel(s) that Best Fit a Particular Context.
+#'
+#' The function can process multiple queries if all the arguments
+#' are of the same length.
+#'
+#' @param geoRegion the geoRegion (e.g., QC)
+#' @param geoDomain the geoDomain (e.g., 2OUEST)
+#' @param outputType the outputType (e.g., Volume)
+#' @param ecoType the ecotype (e.g., MS22)
+#' @param leadingSpecies an option character string that stands
+#' for the leading species (e.g., EN)
+#' @return a data.frame instance
+#'
+#' @export
+SGFindBest <- function(geoRegion, geoDomain, outputType, ecoType, leadingSpecies = NULL) {
+  if (is.null(geoRegion) | is.null(geoDomain) | is.null(outputType) | is.null(ecoType)) {
+    stop("The geoRegion, geoDomain, outputType and ecoType arguments must be non null!")
+  }
+  if (length(geoRegion) != length(geoDomain) |
+      length(geoRegion) != length(outputType) |
+      length(geoRegion) != length(ecoType) |
+      (!is.null(leadingSpecies) & length(geoRegion) != length(leadingSpecies))) {
+    stop("The geoRegion, geoDomain, outputType, ecoType and (optionally) leadingSpecies arguments must be of the same length!")
+  }
+  nbContexts <- length(geoRegion)
+  overallDataset <- NULL
+  for (i in 1:nbContexts) {
+    query <- paste0(serverAddress, "metamodels/findBest?georegion=", geoRegion[i],
+                    "&geodomain=", geoDomain[i],
+                    "&outputtype=", outputType[i],
+                    "&ecotype=", ecoType[i])
+    if (!is.null(leadingSpecies)) {
+      query <- paste0(query, "&leadingspecies=", leadingSpecies[i])
+    }
+    dataset <- .sendQueryAndRetrieveResult(query)
+    dataset <- dataset[,colnames(dataset)[which(!colnames(dataset) %in% c("dataSourceYears", "nbPlots"))]]
+    newColnames <- paste0("bestFit_", colnames(dataset))
+    colnames(dataset) <- newColnames
+    dataset$queryId <- i
+    dataset$geoRegion <- geoRegion[i]
+    dataset$geoDomain <- geoDomain[i]
+    dataset$outputType <- outputType[i]
+    dataset$ecoType <- ecoType[i]
+    if (!is.null(leadingSpecies)) {
+      dataset$leadingSpecies <- leadingSpecies[i]
+    } else {
+      dataset$leadingSpecies <- "None"
+    }
+    overallDataset <- rbind(overallDataset, dataset[,c("queryId", "geoRegion", "geoDomain", "outputType", "ecoType", "leadingSpecies", newColnames)])
+  }
+  return(overallDataset)
+}
 
 
 
