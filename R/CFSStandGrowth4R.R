@@ -550,8 +550,8 @@ SGFindBest <- function(geoRegion, geoDomain, outputType, ecoType, leadingSpecies
     dataset <- .sendQueryAndRetrieveResult(query)
     colToKeep <- c("mmid", "geoRegion", "geoDomain", "dataSource", "climateChangeOption", "growthModel", "outputType", "stratumGroup", "leadingSpecies")
     if (length(dataset) == 0) { # there is no match, then we create an empty dataset
-      dataset <- data.frame(mmid = "NA", geoRegion = "NA", geoDomain = "NA", dataSource = "NA", climateChangeOption = "NA",
-                            growthModel = "NA", outputType = "NA", stratumGroup = "NA", leadingSpecies = "NA")
+      dataset <- data.frame(mmid = NA, geoRegion = NA, geoDomain = NA, dataSource = NA, climateChangeOption = NA,
+                            growthModel = NA, outputType = NA, stratumGroup = NA, leadingSpecies = NA)
     }
     dataset <- dataset[,colnames(dataset)[which(colnames(dataset) %in% colToKeep)]]
     newColnames <- paste0("bestFit_", colnames(dataset))
