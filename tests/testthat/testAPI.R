@@ -92,5 +92,10 @@ test_that("Check nb of best fit models", {
   expect_equal(is.na(bestMetaModels[3,"bestFit_geoRegion"]), TRUE)
 })
 
+bestMetaModels <- SGFindBest("QC", "4EST", "Volume_Coniferous", "FE22", leadingSpecies = "EN")
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 1)
+  expect_equal(bestMetaModels$bestFit_leadingSpecies, "None")
+})
 
 
