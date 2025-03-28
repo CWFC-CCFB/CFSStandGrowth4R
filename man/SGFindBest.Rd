@@ -15,8 +15,9 @@ SGFindBest(geoRegion, geoDomain, outputType, ecoType, leadingSpecies = NULL)
 
 \item{ecoType}{the ecotype (e.g., MS22)}
 
-\item{leadingSpecies}{an option character string that stands
-for the leading species (e.g., EN)}
+\item{leadingSpecies}{an optional character string that stands
+for the leading species. It can be the original code (e.g., EN)
+or the generic code (e.g. SpruceBlack).}
 }
 \value{
 a data.frame instance

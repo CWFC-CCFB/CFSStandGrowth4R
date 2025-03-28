@@ -12,7 +12,7 @@ SGStatus()
 fields <- SGGetMetaModelQueryFields()
 
 test_that("Check query fields", {
-  expect_equal(nrow(fields), 13)
+  expect_equal(nrow(fields), 14)
   expect_equal(fields[1,"field"], "mmid")
 })
 
@@ -36,7 +36,7 @@ test_that("Check model list", {
 
 metaData <- SGGetMetaData(listMetaModels$mmid[1])
 test_that("Check meta data", {
-  expect_equal(length(metaData), 15)
+  expect_equal(length(metaData), 16)
 })
 
 prediction <- SGPredict(listMetaModels$mmid[1], 0, 150, 1)
@@ -97,5 +97,20 @@ test_that("Check nb of best fit models", {
   expect_equal(nrow(bestMetaModels), 1)
   expect_equal(bestMetaModels$bestFit_leadingSpecies, "None")
 })
+
+bestMetaModels <- SGFindBest("QC", "6EST", "Volume_Coniferous", "RS22", leadingSpecies = "EN")
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 1)
+  expect_equal(bestMetaModels$bestFit_leadingSpecies, "EN")
+  expect_equal(bestMetaModels$bestFit_leadingSpeciesGenericCode, "SpruceBlack")
+})
+
+bestMetaModels <- SGFindBest("QC", "6EST", "Volume_Coniferous", "RS22", leadingSpecies = "SpruceBlack")
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 1)
+  expect_equal(bestMetaModels$bestFit_leadingSpecies, "EN")
+  expect_equal(bestMetaModels$bestFit_leadingSpeciesGenericCode, "SpruceBlack")
+})
+
 
 

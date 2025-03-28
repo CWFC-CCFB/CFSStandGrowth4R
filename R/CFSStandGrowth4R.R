@@ -522,8 +522,9 @@ SGGOFGraph <- function(mmid, textsize = 20, title = mmid) {
 #' @param geoDomain the geoDomain (e.g., 2OUEST)
 #' @param outputType the outputType (e.g., Volume)
 #' @param ecoType the ecotype (e.g., MS22)
-#' @param leadingSpecies an option character string that stands
-#' for the leading species (e.g., EN)
+#' @param leadingSpecies an optional character string that stands
+#' for the leading species. It can be the original code (e.g., EN)
+#' or the generic code (e.g. SpruceBlack).
 #' @return a data.frame instance
 #'
 #' @export
@@ -548,10 +549,10 @@ SGFindBest <- function(geoRegion, geoDomain, outputType, ecoType, leadingSpecies
       query <- paste0(query, "&leadingspecies=", leadingSpecies[i])
     }
     dataset <- .sendQueryAndRetrieveResult(query)
-    colToKeep <- c("mmid", "geoRegion", "geoDomain", "dataSource", "climateChangeOption", "growthModel", "outputType", "stratumGroup", "leadingSpecies")
+    colToKeep <- c("mmid", "geoRegion", "geoDomain", "dataSource", "climateChangeOption", "growthModel", "outputType", "stratumGroup", "leadingSpecies", "leadingSpeciesGenericCode")
     if (length(dataset) == 0) { # there is no match, then we create an empty dataset
       dataset <- data.frame(mmid = NA, geoRegion = NA, geoDomain = NA, dataSource = NA, climateChangeOption = NA,
-                            growthModel = NA, outputType = NA, stratumGroup = NA, leadingSpecies = NA)
+                            growthModel = NA, outputType = NA, stratumGroup = NA, leadingSpecies = NA, leadingSpeciesGenericCode = NA)
     }
     dataset <- dataset[,colnames(dataset)[which(colnames(dataset) %in% colToKeep)]]
     newColnames <- paste0("bestFit_", colnames(dataset))
