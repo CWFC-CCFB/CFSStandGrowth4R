@@ -112,5 +112,9 @@ test_that("Check nb of best fit models", {
   expect_equal(bestMetaModels$bestFit_leadingSpeciesGenericCode, "SpruceBlack")
 })
 
+bestMetaModels <- SGFindBest("QC", "6EST", "AliveVolume_AllSpecies", "RS22M")
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 2)
+})
 
 

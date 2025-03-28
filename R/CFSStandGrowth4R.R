@@ -521,7 +521,8 @@ SGGOFGraph <- function(mmid, textsize = 20, title = mmid) {
 #' @param geoRegion the geoRegion (e.g., QC)
 #' @param geoDomain the geoDomain (e.g., 2OUEST)
 #' @param outputType the outputType (e.g., Volume)
-#' @param ecoType the ecotype (e.g., MS22)
+#' @param ecoType the ecotype (e.g., MS22). If longer than 4 characters, only
+#' the first four are considered.
 #' @param leadingSpecies an optional character string that stands
 #' for the leading species. It can be the original code (e.g., EN)
 #' or the generic code (e.g. SpruceBlack).
@@ -544,7 +545,7 @@ SGFindBest <- function(geoRegion, geoDomain, outputType, ecoType, leadingSpecies
     query <- paste0(serverAddress, "metamodels/findBest?georegion=", geoRegion[i],
                     "&geodomain=", geoDomain[i],
                     "&outputtype=", outputType[i],
-                    "&ecotype=", ecoType[i])
+                    "&ecotype=", substr(ecoType[i], 1, 4))
     if (!is.null(leadingSpecies)) {
       query <- paste0(query, "&leadingspecies=", leadingSpecies[i])
     }

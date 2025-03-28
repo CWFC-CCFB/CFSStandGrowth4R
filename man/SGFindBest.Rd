@@ -13,7 +13,8 @@ SGFindBest(geoRegion, geoDomain, outputType, ecoType, leadingSpecies = NULL)
 
 \item{outputType}{the outputType (e.g., Volume)}
 
-\item{ecoType}{the ecotype (e.g., MS22)}
+\item{ecoType}{the ecotype (e.g., MS22). If longer than 4 characters, only
+the first four are considered.}
 
 \item{leadingSpecies}{an optional character string that stands
 for the leading species. It can be the original code (e.g., EN)
