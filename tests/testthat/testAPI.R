@@ -70,13 +70,13 @@ SGGetSummary("QC_5EST_MS22_NoChange_AliveVolume_AllSpecies_PET4_Artemis2009")
 
 bestMetaModels <- SGFindBest("QC", "4EST", "Volume", "FE22")
 test_that("Check nb of best fit models", {
-  expect_equal(nrow(bestMetaModels), 3)
+  expect_equal(nrow(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")),]), 3)
 })
 
 
 bestMetaModels <- SGFindBest(rep("QC",2), c("4EST","4OUEST"), rep("Volume_Coniferous",2), rep("FE22",2))
 test_that("Check nb of best fit models", {
-  expect_equal(nrow(bestMetaModels), 2)
+  expect_equal(nrow(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")),]), 2)
 })
 
 bestMetaModels <- SGFindBest("QC", "6EST", "Volume", "FE22")
@@ -88,28 +88,28 @@ test_that("Check nb of best fit models", {
 
 bestMetaModels <- SGFindBest(rep("QC",3), c("4EST","4OUEST","6OUEST"), rep("Volume_Coniferous",3), rep("FE22",3))
 test_that("Check nb of best fit models", {
-  expect_equal(nrow(bestMetaModels), 3)
-  expect_equal(is.na(bestMetaModels[3,"bestFit_geoRegion"]), TRUE)
+  expect_equal(nrow(bestMetaModels[which(is.na(bestMetaModels$bestFit_mmid) | !endsWith(bestMetaModels$bestFit_mmid, "Artemis2014")),]), 3)
+  expect_equal(is.na(bestMetaModels[5,"bestFit_geoRegion"]), TRUE)
 })
 
 bestMetaModels <- SGFindBest("QC", "4EST", "Volume_Coniferous", "FE22", leadingSpecies = "EN")
 test_that("Check nb of best fit models", {
-  expect_equal(nrow(bestMetaModels), 1)
-  expect_equal(bestMetaModels$bestFit_leadingSpecies, "None")
+  expect_equal(nrow(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")),]), 1)
+  expect_equal(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")),"bestFit_leadingSpecies"], "None")
 })
 
 bestMetaModels <- SGFindBest("QC", "6EST", "Volume_Coniferous", "RS22", leadingSpecies = "EN")
 test_that("Check nb of best fit models", {
-  expect_equal(nrow(bestMetaModels), 1)
-  expect_equal(bestMetaModels$bestFit_leadingSpecies, "EN")
-  expect_equal(bestMetaModels$bestFit_leadingSpeciesGenericCode, "SpruceBlack")
+  expect_equal(nrow(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")),]), 1)
+  expect_equal(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")), "bestFit_leadingSpecies"], "EN")
+  expect_equal(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")), "bestFit_leadingSpeciesGenericCode"], "SpruceBlack")
 })
 
 bestMetaModels <- SGFindBest("QC", "6EST", "Volume_Coniferous", "RS22", leadingSpecies = "SpruceBlack")
 test_that("Check nb of best fit models", {
-  expect_equal(nrow(bestMetaModels), 1)
-  expect_equal(bestMetaModels$bestFit_leadingSpecies, "EN")
-  expect_equal(bestMetaModels$bestFit_leadingSpeciesGenericCode, "SpruceBlack")
+  expect_equal(nrow(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")),]), 1)
+  expect_equal(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")), "bestFit_leadingSpecies"], "EN")
+  expect_equal(bestMetaModels[which(endsWith(bestMetaModels$bestFit_mmid, "Artemis2009")), "bestFit_leadingSpeciesGenericCode"], "SpruceBlack")
 })
 
 bestMetaModels <- SGFindBest("QC", "6EST", "AliveVolume_AllSpecies", "RS22M")
