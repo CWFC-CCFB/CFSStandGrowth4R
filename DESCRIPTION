@@ -2,9 +2,12 @@ Package: CFSStandGrowth4R
 Type: Package
 Title: Connect to the 'CFSStandGrowth' Web API
 Version: 1.8.3
-Author: Jean-François Lavoie and Mathieu Fortin, Canadian Wood Fibre Centre, Canadian Forest Service
-Maintainer: Mathieu Fortin <mathieu.fortin.re@gmail.com>
-Copyright: His Majesty the King in Right of Canada
+Authors@R: c(
+    person("Mathieu", "Fortin", email = "mathieu.fortin.re@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6436-2727")),
+    person("Jean-Francois", "Lavoie", email = "atmailjfl@gmail.com", role = c("aut")),
+    person("Francis", "Durnin-Vermette", email="francis.durninvermette@nrcan-rncan.gc.ca", role=c("ctb")),
+    person("His Majesty the King in right of Canada", role=c("cph")))
+Date: 2025-08-11
 Description: A client for the CFSStandGrowth Web API. The API contains a database
     of meta-models which can be queried through the client. Meta-model predictions can 
     also be produced in deterministic or stochastic mode.
