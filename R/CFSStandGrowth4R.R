@@ -20,7 +20,7 @@
 #############################################################
 
 serverAddress <- "http://repicea.dynu.net/standgrowth/"
-#serverAddress <- "http://localhost:50101/"
+#serverAddress <- "http://localhost:8080/"
 VersionWarningStr <- "VersionWarning"
 MessageToClientStr <- "MessageToClient"
 
