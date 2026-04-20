@@ -19,11 +19,27 @@ More precisely, the CFSStandGrowth4R package makes it possible to
 
 ## License
 
-The CFSStandGrowth4R package is licensed under the GNU Lesser General Public License 3 (LGPL-3).
+The CFSStandGrowth4R package is licensed under the GNU Lesser General Public License 3 (LGPL-3). 
+
+## Installation 
+
+Please see the wiki of the package at https://github.com/CWFC-CCFB/CFSStandGrowth4R/wiki. 
+
+## Citation
+
+The preferred citation is 
+
+Fortin, M. and J.-F. Lavoie. 2022. Reconciling individual-based forest growth models with landscape-level studies through a meta-modelling approach. Canadian Journal of Forest Research 52: 1140–1153. DOI: [10.1139/cjfr-2022-0002] (https://doi.org/10.1139/cjfr-2022-0002)
+
+Use the citation function in R to obtain the appropriate citation for this R package:
+
+~~~R
+citation("CFSStandGrowth4R")
+~~~
 
 ## Developers
 
-- Mathieu Fortin, Canadian Wood Fibre Center
+- Mathieu Fortin, Canadian Forest Service
 - Jean-François Lavoie, Effixa inc.
 
 ## Contact
