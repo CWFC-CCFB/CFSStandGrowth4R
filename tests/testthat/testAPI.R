@@ -90,8 +90,8 @@ test_that("Check nb of best fit models", {
 
 bestMetaModels <- SGFindBest(rep("QC",3), c("4EST","4OUEST","6OUEST"), rep("Volume",3), rep("FE22",3))
 test_that("Check nb of best fit models", {
-  expect_equal(nrow(bestMetaModels[which(is.na(bestMetaModels$bestFit_mmid) | !endsWith(bestMetaModels$bestFit_mmid, "Artemis2014")),]), 3)
-  expect_equal(is.na(bestMetaModels[5,"bestFit_geoRegion"]), TRUE)
+  expect_equal(nrow(bestMetaModels[which(is.na(bestMetaModels$bestFit_mmid) | bestMetaModels$bestFit_growthModel == "Artemis2009"),]), 3)
+  expect_equal(is.na(bestMetaModels[nrow(bestMetaModels),"bestFit_geoRegion"]), TRUE)
 })
 
 bestMetaModels <- SGFindBest("QC", "4EST", "Volume", "FE22", leadingSpecies = "EN")
@@ -119,4 +119,13 @@ test_that("Check nb of best fit models", {
   expect_equal(nrow(bestMetaModels), 3)
 })
 
+bestMetaModels <- SGFindBest("QC", "6EST", "AliveVolume_AllSpecies", "MS22-PT")
+test_that("Check nb of best fit models", {
+  expect_equal(nrow(bestMetaModels), 3)
+})
+
+listMetaModels <- SGSelectMetaModels(geoDomain = "6", stratumGroup = "MS22", growthModel = "Natura2014", outputType = "Volume")
+test_that("Check nb of models from request", {
+  expect_equal(nrow(listMetaModels), 7)
+})
 
